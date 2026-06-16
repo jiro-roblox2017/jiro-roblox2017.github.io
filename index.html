@@ -67,9 +67,13 @@
             overflow: hidden;
             aspect-ratio: 16 / 9;
         }
-        video {
+        video, iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
+            border: none;
             object-fit: contain;
         }
         .error-message {
@@ -85,27 +89,34 @@
     <div class="container">
         <h1>🔗 URL動画プレイヤー</h1>
         
-        <!-- URLを入力して読み込む部分 -->
         <div class="input-area">
-            <input type="text" id="videoUrl" placeholder="動画のURL（.mp4など）をここに貼り付け">
+            <input type="text" id="videoUrl" placeholder="動画URL または YouTubeリンクをここに貼り付け">
             <button onclick="loadVideo()">再生</button>
         </div>
 
-        <!-- ビデオ再生画面 -->
         <div class="video-wrapper">
             <video id="myPlayer" controls preload="metadata">
                 お使いのブラウザは動画再生に対応していません。
             </video>
+            <iframe id="youtubePlayer" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="display: none;"></iframe>
         </div>
         
         <div id="error" class="error-message">動画の読み込みに失敗しました。URLを確認してください。</div>
     </div>
 
     <script>
-        // ボタンを押した時に動画を読み込む仕組み（JavaScript）
+        // YouTubeのURLから動画ID（v=xxxxの部分など）を抽出する関数
+        function getYouTubeId(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        // ボタンを押した時に動画を読み込む仕組み
         function loadVideo() {
             const urlInput = document.getElementById('videoUrl').value.trim();
             const player = document.getElementById('myPlayer');
+            const ytPlayer = document.getElementById('youtubePlayer');
             const errorDiv = document.getElementById('error');
             
             if (urlInput === "") {
@@ -115,19 +126,34 @@
 
             errorDiv.style.display = 'none';
             
-            // プレイヤーに新しいURLをセットして再生
-            player.src = urlInput;
-            player.load();
-            
-            // 自動再生を試みる（ブラウザの仕様で音消しじゃないと動かない場合があるため、手動再生推奨）
-            player.play().catch(error => {
-                console.log("自動再生がブロックされました。再生ボタンを押してください。");
-            });
+            // YouTubeのURLかどうかをチェック
+            const ytId = getYouTubeId(urlInput);
 
-            // エラー検知
-            player.onerror = function() {
-                errorDiv.style.display = 'block';
-            };
+            if (ytId) {
+                // 【YouTubeの場合】
+                player.style.display = 'none'; // 通常プレイヤーを隠す
+                player.src = ""; // 動いているかもしれない動画を止める
+                
+                ytPlayer.src = `https://www.youtube.com/embed/${ytId}?autoplay=1`; // 埋め込み用URLをセット（自動再生付き）
+                ytPlayer.style.display = 'block'; // YouTubeプレイヤーを表示
+            } else {
+                // 【通常の動画ファイル(.mp4など)の場合】
+                ytPlayer.style.display = 'none'; // YouTubeプレイヤーを隠す
+                ytPlayer.src = "";
+                
+                player.src = urlInput;
+                player.style.display = 'block'; // 通常プレイヤーを表示
+                player.load();
+                
+                player.play().catch(error => {
+                    console.log("自動再生がブロックされました。再生ボタンを押してください。");
+                });
+
+                // エラー検知
+                player.onerror = function() {
+                    errorDiv.style.display = 'block';
+                };
+            }
         }
     </script>
 
