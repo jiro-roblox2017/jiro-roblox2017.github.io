@@ -134,7 +134,7 @@
                 player.style.display = 'none'; // 通常プレイヤーを隠す
                 player.src = ""; // 動いているかもしれない動画を止める
                 
-                ytPlayer.src = `https://www.youtube.com/embed/${ytId}?autoplay=1`; // 埋め込み用URLをセット（自動再生付き）
+                ytPlayer.src = `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1`;
                 ytPlayer.style.display = 'block'; // YouTubeプレイヤーを表示
             } else {
                 // 【通常の動画ファイル(.mp4など)の場合】
