@@ -3,352 +3,292 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>総合データ管理ポータル</title>
+    <title>ネクスト・ソリューションズ株式会社 | Next Solutions Inc.</title>
+    <link rel="icon" href="favicon.png" type="image/png">
     <style>
+        /* 共通スタイル */
         body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
+            font-family: 'Helvetica Neue', Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            background-color: #ffffff;
+            color: #333333;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            line-height: 1.6;
         }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
+        
+        /* ==========================================
+           🏢 企業ホームページのスタイル（表の顔）
+           ========================================== */
+        header {
+            background: #fff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        h1 {
-            font-size: 1.8rem;
-            color: #38bdf8;
-            margin-bottom: 5px;
-        }
-        .subtitle {
-            color: #64748b;
-            font-size: 0.9rem;
-            margin-bottom: 30px;
-        }
-
-        /* 💡 メインメニュー（カード型） */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-        .menu-card {
-            background: #1e293b;
-            padding: 20px;
-            border-radius: 12px;
-            border: 2px solid #334155;
+        .logo {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #1e3a8a; /* 信頼感のある紺色 */
             cursor: pointer;
-            transition: all 0.2s ease;
+        }
+        nav a {
+            color: #4b5563;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 0.95rem;
+        }
+        nav a:hover { color: #1e3a8a; }
+
+        .hero {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 80px 40px;
+            text-align: center;
+        }
+        .hero h2 { font-size: 2.3rem; margin: 0 0 20px 0; }
+        .hero p { font-size: 1.1rem; margin: 0; opacity: 0.9; }
+
+        .section { padding: 60px 40px; max-width: 1000px; margin: 0 auto; }
+        .section-title {
+            font-size: 1.6rem;
+            color: #1e3a8a;
+            border-bottom: 2px solid #1e3a8a;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
             text-align: left;
         }
-        .menu-card:hover {
-            border-color: #38bdf8;
-            transform: translateY(-2px);
-            background: #1e293b;
-        }
-        .menu-card h3 {
-            margin: 0 0 10px 0;
-            color: #38bdf8;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .menu-card p {
-            margin: 0;
-            font-size: 0.85rem;
-            color: #94a3b8;
-            line-height: 1.4;
-        }
 
-        /* 💡 各コンテンツセクション */
-        .content-section {
-            display: none;
-            background: #1e293b;
-            padding: 25px;
-            border-radius: 12px;
-            border: 1px solid #334155;
-            animation: fadeIn 0.3s ease;
-        }
-        .content-section.active {
-            display: block;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .services { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+        .service-card { background: #f8fafc; padding: 25px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: left;}
+        .service-card h4 { margin: 0 0 10px 0; color: #1e3a8a; font-size: 1.1rem; }
+        .service-card p { margin: 0; font-size: 0.9rem; color: #64748b; }
 
-        .back-btn {
-            background: #475569;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .back-btn:hover { background: #64748b; }
+        .news-list { text-align: left; list-style: none; padding: 0; }
+        .news-item { padding: 15px 0; border-bottom: 1px solid #e2e8f0; display: flex; gap: 20px; font-size: 0.95rem; }
+        .news-date { color: #94a3b8; font-weight: bold; }
 
-        /* --- 1. 動画プレイヤー用 --- */
+        footer { background: #0f172a; color: #94a3b8; text-align: center; padding: 30px; font-size: 0.85rem; margin-top: 60px; }
+
+        /* ==========================================
+           ⚡ 裏メニュー（動画・ゲーム）のスタイル
+           ========================================== */
+        #secretPortal {
+            display: none; /* 初期は非表示 */
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #0f172a; color: #f8fafc;
+            z-index: 9999; padding: 20px; box-sizing: border-box; overflow-y: auto;
+        }
+        .portal-container { max-width: 800px; margin: 0 auto; text-align: center; }
+        .tab-menu { display: flex; gap: 10px; margin-bottom: 20px; background: #1e293b; padding: 8px; border-radius: 8px; }
+        .tab-btn { flex: 1; padding: 10px; background: #334155; color: #94a3b8; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .tab-btn.active { background: #38bdf8; color: #0f172a; }
+        .content-section { display: none; background: #1e293b; padding: 25px; border-radius: 12px; }
+        .content-section.active { display: block; }
+        .back-to-corp { background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 20px; }
+        
+        /* 動画・ゲーム用インラインスタイル */
         .input-area { display: flex; gap: 10px; margin-bottom: 20px; }
-        input[type="text"] {
-            flex: 1; padding: 12px; border-radius: 6px; border: 2px solid #334155;
-            background-color: #0f172a; color: #fff; font-size: 1rem;
-        }
-        input[type="text"]:focus { border-color: #38bdf8; outline: none; }
-        .video-wrapper { position: relative; width: 100%; background: #000; border-radius: 8px; overflow: hidden; aspect-ratio: 16 / 9; }
-        video, iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; object-fit: contain; }
-        .action-btn { padding: 0 20px; background-color: #38bdf8; color: #0f172a; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        .error-message { color: #f87171; margin-top: 10px; display: none; }
-
-        /* --- 2. テトリス用 --- */
-        canvas { background: #0f172a; border: 2px solid #334155; border-radius: 6px; display: block; margin: 0 auto; }
-        .game-btn { margin-top: 10px; padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
-
-        /* --- 3. クッカー（連打）用 --- */
-        .click-cookie { width: 120px; height: 120px; background: #b45309; border-radius: 50%; margin: 20px auto; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 3rem; box-shadow: 0 6px 0 #78350f; user-select: none; }
-        .click-cookie:active { transform: translateY(4px); box-shadow: 0 2px 0 #78350f; }
+        input[type="text"] { flex: 1; padding: 12px; border-radius: 6px; border: 2px solid #334155; background-color: #0f172a; color: #fff; }
+        .video-wrapper { position: relative; width: 100%; background: #000; border-radius: 8px; aspect-ratio: 16 / 9; }
+        video, iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        canvas { background: #0f172a; border: 2px solid #334155; display: block; margin: 0 auto; }
+        .cookie-btn { width: 100px; height: 100px; background: #b45309; border-radius: 50%; margin: 20px auto; cursor: pointer; font-size: 2.5rem; display:flex; align-items:center; justify-content:center; box-shadow: 0 4px 0 #78350f; }
+        .cookie-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #78350f; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    
-    <div id="homeMenu">
-        <h1>📊 自作ポータルシステム</h1>
-        <div class="subtitle">各種モジュールにアクセスできます。</div>
-        
-        <div class="menu-grid">
-            <div class="menu-card" onclick="showSection('video')">
-                <h3>📺 動画プレイヤー</h3>
-                <p>外部動画URL、またはYouTubeのリンクを入力してストリーミング再生をテストします（Cisco対策済）。</p>
+    <div id="corporatePage">
+        <header>
+            <div class="logo" ondblclick="openSecretPortal()">🌐 NEXT SOLUTIONS</div>
+            <nav>
+                <a href="#services">事業内容</a>
+                <a href="#news">お知らせ</a>
+                <a href="#company">会社概要</a>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <h2>テクノロジーで、次の未来をデザインする。</h2>
+            <p>ネクスト・ソリューションズは、高度なデータ解析とシステム構築で企業のDXを推進します。</p>
+        </section>
+
+        <section id="services" class="section">
+            <h3 class="section-title">事業内容 (Services)</h3>
+            <div class="services">
+                <div class="service-card">
+                    <h4>01. クラウドインテグレーション</h4>
+                    <p>最先端のパブリッククラウドを用いた、安全で拡張性の高いサーバー環境の設計・構築を行います。</p>
+                </div>
+                <div class="service-card">
+                    <h4>02. ビッグデータ解析シミュレーション</h4>
+                    <p>独自のアルゴリズム（落下型ブロック演算など）を用い、複雑な構造データの最適化シミュレーションを実施します。</p>
+                </div>
+                <div class="service-card">
+                    <h4>03. メディアストリーミング基盤</h4>
+                    <p>大容量の動画配信や、マルチプラットフォームに対応した独自の動画再生プレイヤーの検証を行っています。</p>
+                </div>
             </div>
-            <div class="menu-card" onclick="showSection('tetris')">
-                <h3>🎮 落下型シミュレータ</h3>
-                <p>キーボードの矢印キーを使用してブロックを配置する、2D型データ演算シミュレータ（テトリス）です。</p>
-            </div>
-            <div class="menu-card" onclick="showSection('clicker')">
-                <h3>🍪 高速カウントテスト</h3>
-                <p>クリックの応答速度を計測する、シンプルな連打ゲーム。授業中の静かな暇つぶしに最適。</p>
-            </div>
+        </section>
+
+        <section id="news" class="section">
+            <h3 class="section-title">お知らせ (News)</h3>
+            <ul class="news-list">
+                <li class="news-item"><span class="news-date">2026.06.15</span> <span>資本金を5,000万円に増資いたしました。</span></li>
+                <li class="news-item"><span class="news-date">2026.05.01</span> <span>クールビズ実施のお知らせ（5月1日〜10月31日）</span></li>
+                <li class="news-item"><span class="news-date">2026.04.10</span> <span>プライバシーマーク（Pマーク）の更新認定を受けました。</span></li>
+            </ul>
+        </section>
+
+        <footer id="company">
+            <p>© 2026 Next Solutions Inc. All Rights Reserved. (ロゴをダブルクリックで管理画面へ)</p>
+        </footer>
+    </div>
+
+
+    <div id="secretPortal">
+        <div class="portal-container">
+            <button class="back-to-corp" onclick="closeSecretPortal()">緊急回避（HPに戻る）</button>
             
+            <div class="tab-menu">
+                <button class="tab-btn active" onclick="switchTab('video')">📺 動画</button>
+                <button class="tab-btn" onclick="switchTab('tetris')">🎮 テト</button>
+                <button class="tab-btn" onclick="switchTab('click')">🍪 連打</button>
             </div>
-    </div>
 
-    <div id="videoSection" class="content-section">
-        <button class="back-btn" onclick="goHome()">⬅ ホームに戻る</button>
-        <h2>📺 動画プレイヤー</h2>
-        <div class="input-area">
-            <input type="text" id="videoUrl" placeholder="動画URL または YouTubeリンクを貼り付け">
-            <button class="action-btn" onclick="loadVideo()">再生</button>
+            <div id="videoTab" class="content-section active">
+                <div class="input-area">
+                    <input type="text" id="videoUrl" placeholder="YouTubeリンクなどを貼り付け">
+                    <button style="padding:0 20px;" onclick="loadVideo()">再生</button>
+                </div>
+                <div class="video-wrapper">
+                    <video id="myPlayer" controls></video>
+                    <iframe id="youtubePlayer" style="display: none;"></iframe>
+                </div>
+            </div>
+
+            <div id="tetrisTab" class="content-section">
+                <canvas id="tetris" width="240" height="400"></canvas>
+                <p>スコア: <span id="score">0</span></p>
+                <button style="padding:10px;" onclick="startGame()">スタート</button>
+            </div>
+
+            <div id="clickTab" class="content-section">
+                <div class="cookie-btn" onclick="clickCookie()">🍪</div>
+                <h4>カウント: <span id="cookieCount">0</span></h4>
+            </div>
         </div>
-        <div class="video-wrapper">
-            <video id="myPlayer" controls preload="metadata"></video>
-            <iframe id="youtubePlayer" allowfullscreen style="display: none;"></iframe>
-        </div>
-        <div id="error" class="error-message">動画の読み込みに失敗しました。</div>
     </div>
 
-    <div id="tetrisSection" class="content-section">
-        <button class="back-btn" onclick="goHome()">⬅ ホームに戻る</button>
-        <h2>🎮 落下型シミュレータ</h2>
-        <canvas id="tetris" width="240" height="400"></canvas>
-        <p>スコア: <span id="score">0</span></p>
-        <p style="font-size: 0.85rem; color: #94a3b8;">操作方法: 矢印キー（左右移動 / 上で回転 / 下で急降下）</p>
-        <button class="game-btn" onclick="startGame()">スタート / リセット</button>
-    </div>
-
-    <div id="clickerSection" class="content-section">
-        <button class="back-btn" onclick="goHome()">⬅ ホームに戻る</button>
-        <h2>🍪 高速カウントテスト</h2>
-        <p>ひたすら連打して数値を増やそう！（クリック音が響かないように注意）</p>
-        <div class="click-cookie" onclick="clickCookie()">🍪</div>
-        <h3 style="font-size: 2rem; margin: 10px 0;">カウント: <span id="cookieCount">0</span></h3>
-    </div>
-
-</div>
-
-<script>
-    // ==========================================
-    // 画面遷移（切り替え）ロジック
-    // ==========================================
-    function showSection(sectionId) {
-        // メインメニューを隠す
-        document.getElementById('homeMenu').style.display = 'none';
-        
-        // 一旦すべてのアクティブセクションを非表示に
-        document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
-        
-        // ターゲットのセクションを表示
-        document.getElementById(sectionId + 'Section').classList.add('active');
-    }
-
-    function goHome() {
-        // 全動画の停止
-        const player = document.getElementById('myPlayer');
-        const ytPlayer = document.getElementById('youtubePlayer');
-        player.pause(); player.src = ""; ytPlayer.src = "";
-
-        // ホームメニューを表示してコンテンツを隠す
-        document.getElementById('homeMenu').style.display = 'block';
-        document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
-    }
-
-    // ==========================================
-    // 1. 動画プレイヤーのロジック
-    // ==========================================
-    function getYouTubeId(url) {
-        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-        const match = url.match(regExp);
-        return (match && match[2].length === 11) ? match[2] : null;
-    }
-
-    function loadVideo() {
-        const urlInput = document.getElementById('videoUrl').value.trim();
-        const player = document.getElementById('myPlayer');
-        const ytPlayer = document.getElementById('youtubePlayer');
-        const errorDiv = document.getElementById('error');
-        
-        if (!urlInput) return alert("URLを入力してください");
-        errorDiv.style.display = 'none';
-        const ytId = getYouTubeId(urlInput);
-
-        if (ytId) {
-            player.style.display = 'none'; player.src = "";
-            ytPlayer.src = `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1`;
-            ytPlayer.style.display = 'block';
-        } else {
-            ytPlayer.style.display = 'none'; ytPlayer.src = "";
-            player.src = urlInput;
-            player.style.display = 'block';
-            player.load();
-            player.play().catch(() => console.log("自動再生ブロック"));
-            player.onerror = () => errorDiv.style.display = 'block';
+    <script>
+        // 🤫 裏コマンド・切り替えシステム
+        function openSecretPortal() {
+            document.getElementById('secretPortal').style.display = 'block';
         }
-    }
-
-    // ==========================================
-    // 2. テトリスのロジック
-    // ==========================================
-    const canvas = document.getElementById('tetris');
-    const context = canvas.getContext('2d');
-    context.scale(20, 20);
-
-    function arenaSweep() {
-        let rowCount = 1;
-        outer: for (let y = arena.length - 1; y > 0; --y) {
-            for (let x = 0; x < arena[y].length; ++x) { if (arena[y][x] === 0) continue outer; }
-            const row = arena.splice(y, 1)[0].fill(0); arena.unshift(row); ++y;
-            score += rowCount * 10; rowCount *= 2;
+        function closeSecretPortal() {
+            // 動画を止める
+            const player = document.getElementById('myPlayer');
+            const ytPlayer = document.getElementById('youtubePlayer');
+            player.pause(); player.src = ""; ytPlayer.src = "";
+            
+            document.getElementById('secretPortal').style.display = 'none';
         }
-        updateScore();
-    }
 
-    function collide(arena, player) {
-        const [m, o] = [player.matrix, player.pos];
-        for (let y = 0; y < m.length; ++y) {
-            for (let x = 0; x < m[y].length; ++x) {
-                if (m[y][x] !== 0 && (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) return true;
+        // タブ切り替え
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', (tab==='video'&&i===0) || (tab==='tetris'&&i===1) || (tab==='click'&&i===2));
+            });
+            document.getElementById('videoTab').classList.toggle('active', tab === 'video');
+            document.getElementById('tetrisTab').classList.toggle('active', tab === 'tetris');
+            document.getElementById('clickTab').classList.toggle('active', tab === 'click');
+            
+            if(tab !== 'video') {
+                document.getElementById('myPlayer').pause();
+                document.getElementById('youtubePlayer').src = "";
             }
         }
-        return false;
-    }
 
-    function createMatrix(w, h) { const matrix = []; while (h--) matrix.push(new Array(w).fill(0)); return matrix; }
-    function createPiece(type) {
-        if (type === 'T') return [[0, 0, 0], [1, 1, 1], [0, 1, 0]];
-        if (type === 'O') return [[2, 2], [2, 2]];
-        if (type === 'L') return [[0, 3, 0], [0, 3, 0], [0, 3, 3]];
-        if (type === 'J') return [[0, 4, 0], [0, 4, 0], [4, 4, 0]];
-        if (type === 'I') return [[0, 5, 0, 0], [0, 5, 0, 0], [0, 5, 0, 0], [0, 5, 0, 0]];
-        if (type === 'S') return [[0, 6, 6], [6, 6, 0], [0, 0, 0]];
-        if (type === 'Z') return [[7, 7, 0], [0, 7, 7], [0, 0, 0]];
-    }
+        // --- 動画ロジック ---
+        function getYouTubeId(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp); return (match && match[2].length === 11) ? match[2] : null;
+        }
+        function loadVideo() {
+            const url = document.getElementById('videoUrl').value.trim();
+            const p = document.getElementById('myPlayer'); const yt = document.getElementById('youtubePlayer');
+            const id = getYouTubeId(url);
+            if (id) {
+                p.style.display = 'none'; p.src = "";
+                yt.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1`; yt.style.display = 'block';
+            } else {
+                yt.style.display = 'none'; yt.src = ""; p.src = url; p.style.display = 'block'; p.load(); p.play().catch(()=>{});
+            }
+        }
 
-    function draw() {
-        context.fillStyle = '#0f172a'; context.fillRect(0, 0, canvas.width, canvas.height);
-        drawMatrix(arena, {x: 0, y: 0}); drawMatrix(player.matrix, player.pos);
-    }
+        // --- クッカーロジック ---
+        let count = 0; function clickCookie() { count++; document.getElementById('cookieCount').innerText = count; }
 
-    function drawMatrix(matrix, offset) {
-        const colors = [null, '#ff0d72', '#0dc2ff', '#0dff72', '#f538ff', '#ff8e0d', '#ffe138', '#3877ff'];
-        matrix.forEach((row, y) => {
-            row.forEach((value, x) => { if (value !== 0) { context.fillStyle = colors[value]; context.fillRect(x + offset.x, y + offset.y, 1, 1); } });
+        // --- テトリスロジсь ---
+        const canvas = document.getElementById('tetris'); const context = canvas.getContext('2d'); context.scale(20, 20);
+        function arenaSweep() {
+            let rowCount = 1;
+            outer: for (let y = arena.length - 1; y > 0; --y) {
+                for (let x = 0; x < arena[y].length; ++x) { if (arena[y][x] === 0) continue outer; }
+                const row = arena.splice(y, 1)[0].fill(0); arena.unshift(row); ++y;
+                score += rowCount * 10; rowCount *= 2;
+            }
+            updateScore();
+        }
+        function collide(arena, player) {
+            const [m, o] = [player.matrix, player.pos];
+            for (let y = 0; y < m.length; ++y) {
+                for (let x = 0; x < m[y].length; ++x) { if (m[y][x] !== 0 && (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) return true; }
+            }
+            return false;
+        }
+        function createMatrix(w, h) { const matrix = []; while (h--) matrix.push(new Array(w).fill(0)); return matrix; }
+        function createPiece(type) {
+            if (type === 'T') return [[0, 0, 0], [1, 1, 1], [0, 1, 0]]; if (type === 'O') return [[2, 2], [2, 2]];
+            if (type === 'L') return [[0, 3, 0], [0, 3, 0], [0, 3, 3]]; if (type === 'J') return [[0, 4, 0], [0, 4, 0], [4, 4, 0]];
+            if (type === 'I') return [[0, 5, 0, 0], [0, 5, 0, 0], [0, 5, 0, 0], [0, 5, 0, 0]];
+            if (type === 'S') return [[0, 6, 6], [6, 6, 0], [0, 0, 0]]; if (type === 'Z') return [[7, 7, 0], [0, 7, 7], [0, 0, 0]];
+        }
+        function draw() { context.fillStyle = '#0f172a'; context.fillRect(0, 0, canvas.width, canvas.height); drawMatrix(arena, {x: 0, y: 0}); drawMatrix(player.matrix, player.pos); }
+        function drawMatrix(matrix, offset) {
+            const colors = [null, '#ff0d72', '#0dc2ff', '#0dff72', '#f538ff', '#ff8e0d', '#ffe138', '#3877ff'];
+            matrix.forEach((row, y) => { row.forEach((value, x) => { if (value !== 0) { context.fillStyle = colors[value]; context.fillRect(x + offset.x, y + offset.y, 1, 1); } }); });
+        }
+        function merge(arena, player) { player.matrix.forEach((row, y) => { row.forEach((value, x) => { if (value !== 0) arena[y + player.pos.y][x + player.pos.x] = value; }); }); }
+        function playerDrop() { player.pos.y++; if (collide(arena, player)) { player.pos.y--; merge(arena, player); playerReset(); arenaSweep(); } dropCounter = 0; }
+        function playerMove(dir) { player.pos.x += dir; if (collide(arena, player)) player.pos.x -= dir; }
+        function playerReset() {
+            const pieces = 'ILJOTSZ'; player.matrix = createPiece(pieces[pieces.length * Math.random() | 0]);
+            player.pos.y = 0; player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
+            if (collide(arena, player)) { arena.forEach(row => row.fill(0)); score = 0; updateScore(); }
+        }
+        function playerRotate(dir) {
+            const pos = player.pos.x; let offset = 1; rotate(player.matrix, dir);
+            while (collide(arena, player)) { player.pos.x += offset; offset = -(offset + (offset > 0 ? 1 : -1)); if (offset > player.matrix[0].length) { rotate(player.matrix, -dir); player.pos.x = pos; return; } }
+        }
+        function rotate(matrix, dir) {
+            for (let y = 0; y < matrix.length; ++y) { for (let x = 0; x < y; ++x) [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]]; }
+            if (dir > 0) matrix.forEach(row => row.reverse()); else matrix.reverse();
+        }
+        let dropCounter = 0, dropInterval = 1000, lastTime = 0;
+        function update(time = 0) { const deltaTime = time - lastTime; lastTime = time; dropCounter += deltaTime; if (dropCounter > dropInterval) playerDrop(); draw(); requestAnimationFrame(update); }
+        function updateScore() { document.getElementById('score').innerText = score; }
+        const arena = createMatrix(12, 20); const player = { pos: {x: 0, y: 0}, matrix: null }; let score = 0;
+        
+        document.addEventListener('keydown', event => {
+            if (!document.getElementById('tetrisTab').classList.contains('active')) return;
+            if (event.keyCode === 37) playerMove(-1); else if (event.keyCode === 39) playerMove(1);
+            else if (event.keyCode === 40) playerDrop(); else if (event.keyCode === 38) playerRotate(1);
         });
-    }
-
-    function merge(arena, player) {
-        player.matrix.forEach((row, y) => { row.forEach((value, x) => { if (value !== 0) arena[y + player.pos.y][x + player.pos.x] = value; }); });
-    }
-
-    function playerDrop() {
-        player.pos.y++;
-        if (collide(arena, player)) { player.pos.y--; merge(arena, player); playerReset(); arenaSweep(); }
-        dropCounter = 0;
-    }
-
-    function playerMove(dir) { player.pos.x += dir; if (collide(arena, player)) player.pos.x -= dir; }
-    function playerReset() {
-        const pieces = 'ILJOTSZ'; player.matrix = createPiece(pieces[pieces.length * Math.random() | 0]);
-        player.pos.y = 0; player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
-        if (collide(arena, player)) { arena.forEach(row => row.fill(0)); score = 0; updateScore(); }
-    }
-
-    function playerRotate(dir) {
-        const pos = player.pos.x; let offset = 1; rotate(player.matrix, dir);
-        while (collide(arena, player)) {
-            player.pos.x += offset; offset = -(offset + (offset > 0 ? 1 : -1));
-            if (offset > player.matrix[0].length) { rotate(player.matrix, -dir); player.pos.x = pos; return; }
-        }
-    }
-
-    function rotate(matrix, dir) {
-        for (let y = 0; y < matrix.length; ++y) {
-            for (let x = 0; x < y; ++x) [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]];
-        }
-        if (dir > 0) matrix.forEach(row => row.reverse()); else matrix.reverse();
-    }
-
-    let dropCounter = 0, dropInterval = 1000, lastTime = 0;
-    function update(time = 0) {
-        const deltaTime = time - lastTime; lastTime = time; dropCounter += deltaTime;
-        if (dropCounter > dropInterval) playerDrop();
-        draw(); requestAnimationFrame(update);
-    }
-    function updateScore() { document.getElementById('score').innerText = score; }
-
-    const arena = createMatrix(12, 20);
-    const player = { pos: {x: 0, y: 0}, matrix: null };
-    let score = 0;
-
-    document.addEventListener('keydown', event => {
-        // テトリス画面が表示されている時だけキーを受け付ける
-        if (!document.getElementById('tetrisSection').classList.contains('active')) return;
-        if (event.keyCode === 37) playerMove(-1);
-        else if (event.keyCode === 39) playerMove(1);
-        else if (event.keyCode === 40) playerDrop();
-        else if (event.keyCode === 38) playerRotate(1);
-    });
-
-    let gameStarted = false;
-    function startGame() {
-        if(gameStarted) { playerReset(); score = 0; updateScore(); return; }
-        gameStarted = true; playerReset(); updateScore(); update();
-    }
-
-    // ==========================================
-    // 3. クッカー（連打）ゲームのロジック
-    // ==========================================
-    let cookies = 0;
-    function clickCookie() {
-        cookies++;
-        document.getElementById('cookieCount').innerText = cookies;
-    }
-</script>
+        let gameStarted = false;
+        function startGame() { if(gameStarted) { playerReset(); score = 0; updateScore(); return; } gameStarted = true; playerReset(); updateScore(); update(); }
+    </script>
 </body>
 </html>
