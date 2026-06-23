@@ -2,29 +2,76 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>My Portal</title>
+    <title>My Portal & BBS</title>
     <style>
-        body { background-color: #1e293b; color: white; text-align: center; font-family: sans-serif; }
-        /* リンク（aタグ）をボタンっぽい見た目にする最小限のCSS */
-        .btn {
-            display: inline-block;
-            margin: 10px;
-            padding: 10px 20px;
-            background-color: #38bdf8;
-            color: #0f172a;
-            text-decoration: none; /* 下線を消す */
-            font-weight: bold;
-            border-radius: 4px;
-        }
+        body { background-color: #1e293b; color: white; font-family: sans-serif; padding: 20px; }
+        .bbs-box { max-width: 500px; margin: 20px 0; background: #334155; padding: 15px; border-radius: 6px; }
+        #messages { height: 200px; overflow-y: auto; background: #0f172a; padding: 10px; margin-bottom: 10px; border-radius: 4px; }
+        .msg { border-bottom: 1px solid #334155; padding: 5px 0; font-size: 0.9rem; }
+        input, button { padding: 8px; margin-right: 5px; }
     </style>
 </head>
 <body>
 
-    <h1>My Portal Home</h1>
-    <p>コンテンツを選択してください：</p>
+    <h1>My Portal</h1>
+    <a href="game1.html" style="color: #38bdf8;">👉 ゲーム1のページへ</a>
 
-    <a href="game1.html" class="btn">ゲーム1のページへ</a>
-    <a href="game2.html" class="btn">ゲーム2のページへ</a>
+    <div class="bbs-box">
+        <h3>誰でも掲示板</h3>
+        <div id="messages"></div>
+        
+        <input type="text" id="username" placeholder="名前" style="width: 80px;">
+        <input type="text" id="comment" placeholder="メッセージを入力...">
+        <button onclick="sendMessage()">送信</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // ⚠️ 【重要】ここにFirebaseでコピーした config をそのまま貼り付けて差し替えてください！
+        const firebaseConfig = {
+            apiKey: "XXXXXX",
+            authDomain: "XXXXXX",
+            databaseURL: "https://XXXXXX.firebaseio.com", // <--特にこれが大事
+            projectId: "XXXXXX",
+            storageBucket: "XXXXXX",
+            messagingSenderId: "XXXXXX",
+            appId: "XXXXXX"
+        };
+
+        // Firebaseの初期化
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const dbRef = ref(db, "chat");
+
+        // 送信ボタンを押したときの処理
+        window.sendMessage = function() {
+            const name = document.getElementById("username").value.trim() || "名無し";
+            const text = document.getElementById("comment").value.trim();
+            
+            if (!text) return alert("メッセージを入力してください");
+
+            // データベースに保存
+            push(dbRef, {
+                username: name,
+                comment: text,
+                time: new Date().toLocaleTimeString()
+            });
+
+            document.getElementById("comment").value = ""; // 入力欄を空にする
+        };
+
+        // データベースに新しい書き込みが追加されたら自動で画面に表示する処理
+        onChildAdded(dbRef, (data) => {
+            const msg = data.val();
+            const msgHtml = `<div class="msg"><strong>${msg.username}</strong> (${msg.time}): <br>${msg.comment}</div>`;
+            
+            const msgDiv = document.getElementById("messages");
+            msgDiv.innerHTML += msgHtml;
+            msgDiv.scrollTop = msgDiv.scrollHeight; // 一番下までスクロール
+        });
+    </script>
 
 </body>
 </html>
