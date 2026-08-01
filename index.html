@@ -31,19 +31,45 @@
       color: var(--text-main);
     }
 
-    /* 全ページ共通ヘッダー */
+    /* 固定ヘッダーグループ */
+    .header-group {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background-color: rgba(10, 10, 10, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #1f1f1f;
+    }
+
+    /* 最上部サブバー（このサイトについて・免責事項） */
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 16px;
+      padding: 6px 24px;
+      background-color: rgba(0, 0, 0, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.75rem;
+    }
+
+    .top-bar a {
+      color: var(--text-sub);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .top-bar a:hover {
+      color: var(--text-main);
+    }
+
+    /* メインヘッダー */
     header {
-      height: 60px;
+      height: 54px;
       padding: 0 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      position: sticky;
-      top: 0;
-      background-color: rgba(10, 10, 10, 0.9);
-      backdrop-filter: blur(10px);
-      z-index: 100;
-      border-bottom: 1px solid #1f1f1f;
     }
 
     .logo {
@@ -62,7 +88,7 @@
       font-size: 1.4rem;
     }
 
-    /* HUB部分：オレンジ枠 ＋ 黒文字（視認性向上） */
+    /* HUB部分：オレンジ枠 ＋ 黒文字 */
     .logo-text span {
       background-color: var(--accent-orange);
       color: #000000;
@@ -196,18 +222,27 @@
 </head>
 <body>
 
-  <!-- 全ページ共通ヘッダー -->
-  <header>
-    <a href="index.html" class="logo">
-      <span class="logo-icon">▶</span>
-      <span class="logo-text">JIRO<span>HUB</span></span>
-    </a>
-  </header>
+  <!-- 全ページ共通ヘッダーグループ -->
+  <div class="header-group">
+    <!-- 上部サブバー -->
+    <div class="top-bar">
+      <a href="about.html">このサイトについて</a>
+      <a href="disclaimer.html">免責事項</a>
+    </div>
+
+    <!-- メインヘッダー -->
+    <header>
+      <a href="index.html" class="logo">
+        <span class="logo-icon">▶</span>
+        <span class="logo-text">JIRO<span>HUB</span></span>
+      </a>
+    </header>
+  </div>
 
   <main>
     <div class="video-grid">
 
-      <!-- カード 1: ポモドーロタイマー（アップロード画像 thumbnail1.png を指定） -->
+      <!-- カード 1: ポモドーロタイマー -->
       <a href="pomodoro.html" class="video-card">
         <div class="thumbnail-container">
           <img src="thumbnail1.png" alt="ポモドーロタイマー" class="thumbnail-img">
@@ -217,8 +252,8 @@
           <div class="channel-icon">🍅</div>
           <div class="details">
             <div class="video-title">25分/5分 ポモドーロタイマー【集中＆休憩自動切り替え】</div>
-            <div class="channel-name">勉強</div>
-            <div class="video-stats">26/08/01</div>
+            <div class="channel-name">ワークスペース</div>
+            <div class="video-stats">いつでも利用可能</div>
           </div>
         </div>
       </a>
@@ -233,8 +268,8 @@
           <div class="channel-icon">🌐</div>
           <div class="details">
             <div class="video-title">YouTube 本家サイトを開く（別タブ）</div>
-            <div class="channel-name">リンク</div>
-            <div class="video-stats">26/08/01</div>
+            <div class="channel-name">YouTube.com</div>
+            <div class="video-stats">公式リンク</div>
           </div>
         </div>
       </a>
