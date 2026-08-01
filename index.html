@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <!-- タブアイコン（ファビコン）設定 -->
-<link rel="icon" href="icon.jpg" type="image/jpeg">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JIRO　HUB - ホーム</title>
+  <title>JIRO HUB - ホーム</title>
   
-  <!-- タブアイコン（ファビコン）の画像名を指定 -->
-  <link rel="icon" href="favicon.png" type="image/png">
+  <!-- タブアイコン（ファビコン）設定 -->
+  <link rel="icon" href="icon.jpg" type="image/jpeg">
 
   <style>
     :root {
@@ -33,7 +31,7 @@
       color: var(--text-main);
     }
 
-    /* ヘッダー */
+    /* 全ページ共通ヘッダー */
     header {
       height: 60px;
       padding: 0 24px;
@@ -64,11 +62,20 @@
       font-size: 1.4rem;
     }
 
+    /* HUB部分：オレンジ枠 ＋ 黒文字（視認性向上） */
     .logo-text span {
-      color: var(--accent-orange);
+      background-color: var(--accent-orange);
+      color: #000000;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9em;
+      margin-left: 4px;
+      display: inline-block;
+      line-height: 1.2;
+      font-weight: 900;
     }
 
-    /* メイングリッド */
+    /* メインコンテンツ */
     main {
       padding: 28px 24px;
       max-width: 1200px;
@@ -81,7 +88,6 @@
       gap: 20px 20px;
     }
 
-    /* 動画・コンテンツカード */
     .video-card {
       text-decoration: none;
       color: inherit;
@@ -101,11 +107,10 @@
       border-color: rgba(255, 107, 0, 0.3);
     }
 
-    /* サムネイル画像エリア */
     .thumbnail-container {
       position: relative;
       width: 100%;
-      padding-top: 56.25%; /* 16:9 */
+      padding-top: 56.25%;
       background-color: #1a1a1a;
       border-radius: 8px;
       overflow: hidden;
@@ -125,7 +130,6 @@
       transform: scale(1.03);
     }
 
-    /* オレンジ色のバッジ */
     .duration-badge {
       position: absolute;
       bottom: 8px;
@@ -139,7 +143,6 @@
       letter-spacing: 0.5px;
     }
 
-    /* コンテンツ詳細テキスト */
     .video-info {
       display: flex;
       gap: 12px;
@@ -193,6 +196,7 @@
 </head>
 <body>
 
+  <!-- 全ページ共通ヘッダー -->
   <header>
     <a href="index.html" class="logo">
       <span class="logo-icon">▶</span>
@@ -203,18 +207,18 @@
   <main>
     <div class="video-grid">
 
-      <!-- カード 1: ポモドーロタイマー -->
+      <!-- カード 1: ポモドーロタイマー（アップロード画像 thumbnail1.png を指定） -->
       <a href="pomodoro.html" class="video-card">
         <div class="thumbnail-container">
-          <img src="https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=600&q=80" alt="ポモドーロタイマー" class="thumbnail-img">
+          <img src="thumbnail1.png" alt="ポモドーロタイマー" class="thumbnail-img">
           <div class="duration-badge">タイマー</div>
         </div>
         <div class="video-info">
           <div class="channel-icon">🍅</div>
           <div class="details">
-            <div class="video-title">25分/5分 ポモドーロタイマー</div>
-            <div class="channel-name">勉強して</div>
-            <div class="video-stats">26/08/01</div>
+            <div class="video-title">25分/5分 ポモドーロタイマー【集中＆休憩自動切り替え】</div>
+            <div class="channel-name">ワークスペース</div>
+            <div class="video-stats">いつでも利用可能</div>
           </div>
         </div>
       </a>
@@ -228,7 +232,7 @@
         <div class="video-info">
           <div class="channel-icon">🌐</div>
           <div class="details">
-            <div class="video-title">YouTube サイトを開く（別タブ）</div>
+            <div class="video-title">YouTube 本家サイトを開く（別タブ）</div>
             <div class="channel-name">YouTube.com</div>
             <div class="video-stats">公式リンク</div>
           </div>
