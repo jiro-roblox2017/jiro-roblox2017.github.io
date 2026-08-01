@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ポモドーロタイマー</title>
+  <style>
+    :root {
+      --bg-work: #1a365d;      /* 勉強時：落ち着いた深みのある青 */
+      --bg-break: #4a121a;     /* 休憩時：ワインレッド */
+      --text-color: #ffffff;
+      --btn-bg: rgba(255, 255, 255, 0.2);
+      --btn-hover: rgba(255, 255, 255, 0.35);
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text-color);
+      background-color: var(--bg-work);
+      transition: background-color 0.8s ease;
+    }
+
+    /* 休憩モード時の背景 */
+    body.break-mode {
+      background-color: var(--bg-break);
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    .status {
+      font-size: 1.5rem;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+      opacity: 0.9;
+    }
+
+    .timer {
+      font-size: 6rem;
+      font-weight: 200;
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 2rem;
+      letter-spacing: 2px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    button {
+      background: var(--btn-bg);
+      color: var(--text-color);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      padding: 0.75rem 2rem;
+      font-size: 1.1rem;
+      border-radius: 30px;
+      cursor: pointer;
+      backdrop-filter: blur(5px);
+      transition: all 0.2s ease;
+    }
+
+    button:hover {
+      background: var(--btn-hover);
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="status" id="status">STUDY TIME</div>
+    <div class="timer" id="timer">25:00</div>
+    <div class="controls">
+      <button id="startBtn">開始</button>
+      <button id="resetBtn">リセット</button>
+    </div>
+  </div>
+
+  <script>
+    const WORK_TIME = 25 * 60; // 25分（秒単位）
+    const BREAK_TIME = 5 * 60;  // 5分（秒単位）
+
+    let timeLeft = WORK_TIME;
+    let timerId = null;
+    let isWorkMode = true;
+
+    const timerDisplay = document.getElementById('timer');
+    const statusDisplay = document.getElementById('status');
+    const startBtn = document.getElementById('startBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    // 時間の表示を更新 (MM:SS)
+    function updateDisplay() {
+      const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+      const seconds = (timeLeft % 60).toString().padStart(2, '0');
+      timerDisplay.textContent = `${minutes}:${seconds}`;
+      document.title = `${minutes}:${seconds} - ${isWorkMode ? '勉強中' : '休憩中'}`;
+    }
+
+    // タイマーのカウントダウン処理
+    function startTimer() {
+      if (timerId !== null) return; // 既に実行中の場合は何もしない
+
+      startBtn.textContent = '一時停止';
+      
+      timerId = setInterval(() => {
+        timeLeft--;
+        updateDisplay();
+
+        if (timeLeft <= 0) {
+          clearInterval(timerId);
+          timerId = null;
+          
+          // 勉強と休憩を自動切り替え
+          isWorkMode = !isWorkMode;
+          if (isWorkMode) {
+            timeLeft = WORK_TIME;
+            statusDisplay.textContent = 'STUDY TIME';
+            document.body.classList.remove('break-mode');
+          } else {
+            timeLeft = BREAK_TIME;
+            statusDisplay.textContent = 'BREAK TIME';
+            document.body.classList.add('break-mode');
+          }
+          
+          updateDisplay();
+          startTimer(); // 次のセッションを自動スタート
+        }
+      }, 1000);
+    }
+
+    // タイマーの停止
+    function pauseTimer() {
+      clearInterval(timerId);
+      timerId = null;
+      startBtn.textContent = '開始';
+    }
+
+    // タイマーのリセット
+    function resetTimer() {
+      pauseTimer();
+      isWorkMode = true;
+      timeLeft = WORK_TIME;
+      statusDisplay.textContent = 'STUDY TIME';
+      document.body.classList.remove('break-mode');
+      updateDisplay();
+    }
+
+    // ボタンのイベントリスナー
+    startBtn.addEventListener('click', () => {
+      if (timerId === null) {
+        startTimer();
+      } else {
+        pauseTimer();
+      }
+    });
+
+    resetBtn.addEventListener('click', resetTimer);
+
+    // 初期表示設定
+    updateDisplay();
+  </script>
+  <iframe 
+  width="560" 
+  height="315" 
+  src="https://www.youtube.com/embed/vCTRNKPJr40" 
+  title="YouTube video player" 
+  frameborder="0" 
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+  referrerpolicy="strict-origin-when-cross-origin" 
+  allowfullscreen>
+</iframe>
+</body>
+</html>
