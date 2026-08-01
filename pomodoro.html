@@ -5,7 +5,11 @@
 <link rel="icon" href="icon.jpg" type="image/jpeg">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ポモドーロタイマー</title>
+  <title>JIRO　HUB - ホーム</title>
+  
+  <!-- タブアイコン（ファビコン）の画像名を指定 -->
+  <link rel="icon" href="favicon.png" type="image/png">
+
   <style>
     :root {
       --bg-work: #1a365d;      /* 勉強時：落ち着いた深みのある青 */
@@ -13,15 +17,20 @@
       --text-color: #ffffff;
       --btn-bg: rgba(255, 255, 255, 0.2);
       --btn-hover: rgba(255, 255, 255, 0.35);
+      --input-bg: rgba(255, 255, 255, 0.15);
+      --accent-orange: #ff6b00;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
-      padding: 0;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
-      justify-content: center;
-      align-items: center;
+      flex-direction: column;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       color: var(--text-color);
       background-color: var(--bg-work);
@@ -31,6 +40,51 @@
     /* 休憩モード時の背景 */
     body.break-mode {
       background-color: var(--bg-break);
+    }
+
+    /* 全ページ共通ヘッダー */
+    header {
+      height: 60px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background-color: rgba(10, 10, 10, 0.6);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: #ffffff;
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-icon {
+      color: var(--accent-orange);
+      font-size: 1.4rem;
+    }
+
+    .logo-text span {
+      color: var(--accent-orange);
+    }
+
+    /* セクション1：タイマーエリア（画面いっぱいに表示して動画を隠す） */
+    .timer-section {
+      min-height: calc(100vh - 60px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
     }
 
     .container {
@@ -58,7 +112,7 @@
       justify-content: center;
     }
 
-    button {
+    button, .link-btn {
       background: var(--btn-bg);
       color: var(--text-color);
       border: 1px solid rgba(255, 255, 255, 0.4);
@@ -68,28 +122,138 @@
       cursor: pointer;
       backdrop-filter: blur(5px);
       transition: all 0.2s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    button:hover {
+    button:hover, .link-btn:hover {
       background: var(--btn-hover);
       transform: translateY(-1px);
     }
 
-    button:active {
+    button:active, .link-btn:active {
       transform: translateY(0);
+    }
+
+    /* セクション2：下部の動画＆BGMコントロールエリア */
+    .video-section {
+      padding: 60px 20px 80px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      background-color: rgba(0, 0, 0, 0.2);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .video-container {
+      width: 100%;
+      max-width: 720px;
+      aspect-ratio: 16 / 9;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .video-container iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    /* プレイヤー直下の入力・操作パネル */
+    .bgm-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      width: 100%;
+      max-width: 720px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .bgm-input-group {
+      display: flex;
+      gap: 8px;
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .bgm-controls input {
+      flex: 1;
+      background: var(--input-bg);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: var(--text-color);
+      padding: 0.75rem 1.2rem;
+      border-radius: 30px;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .bgm-controls input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .bgm-controls input:focus {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.7);
+    }
+
+    .bgm-controls button, .bgm-controls .link-btn {
+      font-size: 0.95rem;
+      padding: 0.75rem 1.5rem;
+      white-space: nowrap;
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <div class="status" id="status">STUDY TIME</div>
-    <div class="timer" id="timer">25:00</div>
-    <div class="controls">
-      <button id="startBtn">開始</button>
-      <button id="resetBtn">リセット</button>
+  <!-- 全ページ共通ヘッダー -->
+  <header>
+    <a href="index.html" class="logo">
+      <span class="logo-icon">▶</span>
+      <span class="logo-text">JIRO<span>HUB</span></span>
+    </a>
+  </header>
+
+  <!-- タイマーエリア（画面を開いた時点ではこれだけが見える） -->
+  <section class="timer-section">
+    <div class="container">
+      <div class="status" id="status">STUDY TIME</div>
+      <div class="timer" id="timer">25:00</div>
+      <div class="controls">
+        <button id="startBtn">開始</button>
+        <button id="resetBtn">リセット</button>
+      </div>
     </div>
-  </div>
+  </section>
+
+  <!-- 動画＆音楽変更エリア（下にスクロールすると現れる） -->
+  <section class="video-section">
+    <div class="video-container">
+      <iframe 
+        id="bgmIframe"
+        src="https://www.youtube.com/embed/vCTRNKPJr40?enablejsapi=1" 
+        title="YouTube video player" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        referrerpolicy="strict-origin-when-cross-origin" 
+        allowfullscreen>
+      </iframe>
+    </div>
+
+    <!-- ビデオフレーム直下の操作エリア -->
+    <div class="bgm-controls">
+      <div class="bgm-input-group">
+        <input type="text" id="ytUrlInput" placeholder="YouTubeのURLまたは動画IDを入力">
+        <button id="changeBgmBtn">動画を変更</button>
+      </div>
+      <a id="ytExternalLink" href="https://www.youtube.com/watch?v=vCTRNKPJr40" target="_blank" class="link-btn">
+        YouTubeで開く ↗
+      </a>
+    </div>
+  </section>
 
   <script>
     const WORK_TIME = 25 * 60; // 25分（秒単位）
@@ -103,6 +267,10 @@
     const statusDisplay = document.getElementById('status');
     const startBtn = document.getElementById('startBtn');
     const resetBtn = document.getElementById('resetBtn');
+    const bgmIframe = document.getElementById('bgmIframe');
+    const ytUrlInput = document.getElementById('ytUrlInput');
+    const changeBgmBtn = document.getElementById('changeBgmBtn');
+    const ytExternalLink = document.getElementById('ytExternalLink');
 
     // 時間の表示を更新 (MM:SS)
     function updateDisplay() {
@@ -161,7 +329,32 @@
       updateDisplay();
     }
 
-    // ボタンのイベントリスナー
+    // YouTubeのURLやIDから動画IDを抽出する関数
+    function extractVideoId(url) {
+      if (!url) return null;
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[2].length === 11) ? match[2] : url.trim();
+    }
+
+    // 動画変更処理
+    function changeBgm() {
+      const inputVal = ytUrlInput.value.trim();
+      if (!inputVal) return;
+
+      const videoId = extractVideoId(inputVal);
+      if (videoId && videoId.length === 11) {
+        // iframeの動画を差し替え
+        bgmIframe.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1`;
+        // 外部リンクのURLも更新
+        ytExternalLink.href = `https://www.youtube.com/watch?v=${videoId}`;
+        ytUrlInput.value = '';
+      } else {
+        alert('正しいYouTubeのURLまたは動画IDを入力してください。');
+      }
+    }
+
+    // イベントリスナー
     startBtn.addEventListener('click', () => {
       if (timerId === null) {
         startTimer();
@@ -171,19 +364,13 @@
     });
 
     resetBtn.addEventListener('click', resetTimer);
+    changeBgmBtn.addEventListener('click', changeBgm);
+    ytUrlInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') changeBgm();
+    });
 
     // 初期表示設定
     updateDisplay();
   </script>
-  <iframe 
-  width="560" 
-  height="315" 
-  src="https://www.youtube.com/embed/vCTRNKPJr40" 
-  title="YouTube video player" 
-  frameborder="0" 
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-  referrerpolicy="strict-origin-when-cross-origin" 
-  allowfullscreen>
-</iframe>
 </body>
 </html>
