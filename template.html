@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- ページタイトル（作成するページに合わせて変更してください） -->
+  <title>JIRO HUB - 新規ページ</title>
+
+  <!-- タブアイコン（ファビコン）設定 -->
+  <link rel="icon" href="icon.jpg" type="image/jpeg">
+
+  <style>
+    :root {
+      --bg-main: #0a0a0a;         /* メイン背景色（ダーク） */
+      --card-bg: #141414;         /* カード・パネル背景 */
+      --text-main: #ffffff;       /* 基本文字色（白） */
+      --text-sub: #a0a0a0;        /* 補足文字色（グレー） */
+      --accent-orange: #ff6b00;   /* 差し色（オレンジ） */
+      --accent-orange-hover: #ff8533;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text-main);
+      background-color: var(--bg-main);
+    }
+
+    /* 全ページ共通ヘッダー */
+    header {
+      height: 60px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background-color: rgba(10, 10, 10, 0.8);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: #ffffff;
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-icon {
+      color: var(--accent-orange);
+      font-size: 1.4rem;
+    }
+
+    .logo-text span {
+      color: var(--accent-orange);
+    }
+
+    /* メインコンテンツエリア */
+    main {
+      flex: 1;
+      padding: 30px 24px;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 全ページ共通ヘッダー -->
+  <header>
+    <a href="index.html" class="logo">
+      <span class="logo-icon">▶</span>
+      <span class="logo-text">JIRO<span>HUB</span></span>
+    </a>
+  </header>
+
+  <!-- メインコンテンツ領域（ここに新しいコンテンツを作成します） -->
+  <main>
+    
+  </main>
+
+  <script>
+    // ページ固有のJavaScriptはここに記述します
+  </script>
+
+</body>
+</html>
