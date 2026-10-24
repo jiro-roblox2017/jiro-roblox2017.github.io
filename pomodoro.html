@@ -1,24 +1,26 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <!-- タブアイコン（ファビコン）設定 -->
-  <link rel="icon" href="icon.jpg" type="image/jpeg">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JIRO HUB - ホーム</title>
+  <title>JIRO HUB - ポモドーロタイマー</title>
   
-  <!-- タブアイコン（ファビコン）の画像名を指定 -->
+  <!-- タブアイコン（ファビコン）設定 -->
+  <link rel="icon" href="icon.jpg" type="image/jpeg">
   <link rel="icon" href="favicon.png" type="image/png">
 
   <style>
     :root {
-      --bg-work: #1a365d;      /* 勉強時：落ち着いた深みのある青 */
-      --bg-break: #4a121a;     /* 休憩時：ワインレッド */
-      --text-color: #ffffff;
-      --btn-bg: rgba(255, 255, 255, 0.2);
-      --btn-hover: rgba(255, 255, 255, 0.35);
-      --input-bg: rgba(255, 255, 255, 0.15);
-      --accent-orange: #ff6b00;
+      --bg-work: #0a0a0a;          /* 勉強時：index共通の極黒ダーク背景 */
+      --bg-break: #3a1015;         /* 休憩時：落ち着いたダークワインレッド */
+      --card-bg: #141414;
+      --text-main: #ffffff;        /* 完全な白文字 */
+      --text-sub: #a0a0a0;         /* 補足用グレー文字 */
+      --btn-bg: rgba(255, 255, 255, 0.1);
+      --btn-hover: rgba(255, 255, 255, 0.2);
+      --input-bg: rgba(255, 255, 255, 0.08);
+      --accent-orange: #ff6b00;    /* 鮮やかな差し色オレンジ */
+      --accent-orange-hover: #ff8533;
     }
 
     * {
@@ -32,7 +34,7 @@
       display: flex;
       flex-direction: column;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      color: var(--text-color);
+      color: var(--text-main);
       background-color: var(--bg-work);
       transition: background-color 0.8s ease;
     }
@@ -42,47 +44,45 @@
       background-color: var(--bg-break);
     }
 
-    /* ヘッダーグループ（上部バー ＋ メインヘッダー） */
+    /* 固定ヘッダーグループ */
     .header-group {
       position: sticky;
       top: 0;
       z-index: 100;
-      width: 100%;
+      background-color: rgba(10, 10, 10, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #1f1f1f;
     }
 
-    /* 上部サブバー */
+    /* 最上部サブバー（このサイトについて・免責事項） */
     .top-bar {
-      height: 32px;
-      background-color: rgba(5, 5, 5, 0.8);
       display: flex;
-      align-items: center;
       justify-content: flex-end;
-      padding: 0 24px;
+      align-items: center;
       gap: 16px;
-      font-size: 0.85rem;
+      padding: 6px 24px;
+      background-color: rgba(0, 0, 0, 0.3);
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.75rem;
     }
 
     .top-bar a {
-      color: rgba(255, 255, 255, 0.7);
+      color: var(--text-sub);
       text-decoration: none;
       transition: color 0.2s ease;
     }
 
     .top-bar a:hover {
-      color: #ffffff;
+      color: var(--text-main);
     }
 
     /* メインヘッダー */
     header {
-      height: 60px;
+      height: 54px;
       padding: 0 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background-color: rgba(10, 10, 10, 0.8);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .logo {
@@ -91,7 +91,7 @@
       gap: 8px;
       font-weight: 800;
       font-size: 1.3rem;
-      color: #ffffff;
+      color: var(--text-main);
       text-decoration: none;
       letter-spacing: -0.5px;
     }
@@ -101,20 +101,22 @@
       font-size: 1.4rem;
     }
 
-    /* HUB部分（オレンジ色の角丸四角タグ＋白文字デザイン） */
+    /* HUB部分：オレンジ枠 ＋ 黒文字 */
     .logo-text span {
       background-color: var(--accent-orange);
-      color: #ffffff;
+      color: #000000;
       padding: 2px 6px;
       border-radius: 4px;
+      font-size: 0.9em;
       margin-left: 4px;
-      font-size: 1.1rem;
-      letter-spacing: 0;
+      display: inline-block;
+      line-height: 1.2;
+      font-weight: 900;
     }
 
-    /* セクション1：タイマーエリア（ヘッダー全体の高さ92pxを引く） */
+    /* セクション1：タイマーエリア（ヘッダー全体の高さに合わせて調整） */
     .timer-section {
-      min-height: calc(100vh - 92px);
+      min-height: calc(100vh - 84px);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -127,17 +129,18 @@
     }
 
     .status {
-      font-size: 1.5rem;
-      letter-spacing: 0.1em;
+      font-size: 1.4rem;
+      letter-spacing: 0.15em;
       margin-bottom: 1rem;
-      opacity: 0.9;
+      color: var(--text-sub);
+      font-weight: 600;
     }
 
     .timer {
-      font-size: 6rem;
+      font-size: 6.5rem;
       font-weight: 200;
       font-variant-numeric: tabular-nums;
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
       letter-spacing: 2px;
     }
 
@@ -149,10 +152,10 @@
 
     button, .link-btn {
       background: var(--btn-bg);
-      color: var(--text-color);
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      padding: 0.75rem 2rem;
-      font-size: 1.1rem;
+      color: var(--text-main);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0.75rem 2.2rem;
+      font-size: 1rem;
       border-radius: 30px;
       cursor: pointer;
       backdrop-filter: blur(5px);
@@ -161,11 +164,13 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      font-weight: 600;
     }
 
     button:hover, .link-btn:hover {
       background: var(--btn-hover);
-      transform: translateY(-1px);
+      border-color: var(--accent-orange);
+      transform: translateY(-2px);
     }
 
     button:active, .link-btn:active {
@@ -178,9 +183,9 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
-      background-color: rgba(0, 0, 0, 0.2);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      gap: 24px;
+      background-color: var(--card-bg);
+      border-top: 1px solid #1f1f1f;
     }
 
     .video-container {
@@ -189,7 +194,9 @@
       aspect-ratio: 16 / 9;
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+      background-color: #000;
+      border: 1px solid #1f1f1f;
     }
 
     .video-container iframe {
@@ -219,25 +226,26 @@
     .bgm-controls input {
       flex: 1;
       background: var(--input-bg);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: var(--text-color);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--text-main);
       padding: 0.75rem 1.2rem;
       border-radius: 30px;
       font-size: 0.95rem;
       outline: none;
+      transition: border-color 0.2s ease;
     }
 
     .bgm-controls input::placeholder {
-      color: rgba(255, 255, 255, 0.5);
+      color: var(--text-sub);
     }
 
     .bgm-controls input:focus {
-      background: rgba(255, 255, 255, 0.25);
-      border-color: rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--accent-orange);
     }
 
     .bgm-controls button, .bgm-controls .link-btn {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       padding: 0.75rem 1.5rem;
       white-space: nowrap;
     }
@@ -262,7 +270,7 @@
     </header>
   </div>
 
-  <!-- タイマーエリア（画面を開いた時点ではこれだけが見える） -->
+  <!-- タイマーエリア -->
   <section class="timer-section">
     <div class="container">
       <div class="status" id="status">STUDY TIME</div>
@@ -274,7 +282,7 @@
     </div>
   </section>
 
-  <!-- 動画＆音楽変更エリア（下にスクロールすると現れる） -->
+  <!-- 動画＆音楽変更エリア -->
   <section class="video-section">
     <div class="video-container">
       <iframe 
@@ -287,10 +295,10 @@
       </iframe>
     </div>
 
-    <!-- ビデオフレーム直下の操作エリア -->
+    <!-- プレイヤー直下の操作エリア -->
     <div class="bgm-controls">
       <div class="bgm-input-group">
-        <input type="text" id="ytUrlInput" placeholder="YouTubeや各種URL・Googleリンクを入力">
+        <input type="text" id="ytUrlInput" placeholder="YouTube、Googleリンク、URLやIDを入力">
         <button id="changeBgmBtn">動画を変更</button>
       </div>
       <a id="ytExternalLink" href="https://www.youtube.com/watch?v=vCTRNKPJr40" target="_blank" class="link-btn">
@@ -300,8 +308,8 @@
   </section>
 
   <script>
-    const WORK_TIME = 25 * 60; // 25分（秒単位）
-    const BREAK_TIME = 5 * 60;  // 5分（秒単位）
+    const WORK_TIME = 25 * 60; // 25分
+    const BREAK_TIME = 5 * 60;  // 5分
 
     let timeLeft = WORK_TIME;
     let timerId = null;
@@ -316,7 +324,7 @@
     const changeBgmBtn = document.getElementById('changeBgmBtn');
     const ytExternalLink = document.getElementById('ytExternalLink');
 
-    // 時間の表示を更新 (MM:SS)
+    // 時間表示更新
     function updateDisplay() {
       const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
       const seconds = (timeLeft % 60).toString().padStart(2, '0');
@@ -324,10 +332,9 @@
       document.title = `${minutes}:${seconds} - ${isWorkMode ? '勉強中' : '休憩中'}`;
     }
 
-    // タイマーのカウントダウン処理
+    // タイマー開始
     function startTimer() {
-      if (timerId !== null) return; // 既に実行中の場合は何もしない
-
+      if (timerId !== null) return;
       startBtn.textContent = '一時停止';
       
       timerId = setInterval(() => {
@@ -338,7 +345,6 @@
           clearInterval(timerId);
           timerId = null;
           
-          // 勉強と休憩を自動切り替え
           isWorkMode = !isWorkMode;
           if (isWorkMode) {
             timeLeft = WORK_TIME;
@@ -351,19 +357,19 @@
           }
           
           updateDisplay();
-          startTimer(); // 次のセッションを自動スタート
+          startTimer();
         }
       }, 1000);
     }
 
-    // タイマーの停止
+    // タイマー一時停止
     function pauseTimer() {
       clearInterval(timerId);
       timerId = null;
       startBtn.textContent = '開始';
     }
 
-    // タイマーのリセット
+    // タイマーリセット
     function resetTimer() {
       pauseTimer();
       isWorkMode = true;
@@ -373,12 +379,11 @@
       updateDisplay();
     }
 
-    // 入力されたURLからGoogleのリダイレクトを解除し、最適なURL/動画IDを判別する関数
+    // URL解析（Googleリダイレクト・YouTube・その他対応）
     function parseVideoUrl(input) {
       if (!input) return null;
       let url = input.trim();
 
-      // 1. GoogleのリダイレクトURL (google.com/url?q=... や ?url=...) から中の実際のURLを抽出する処理
       try {
         if (url.includes('google.com/') && (url.includes('q=') || url.includes('url='))) {
           const tempUrl = url.startsWith('http') ? url : 'https://' + url;
@@ -388,27 +393,22 @@
             url = decodeURIComponent(targetUrl);
           }
         }
-      } catch (e) {
-        // パースエラー時はそのまま進める
-      }
+      } catch (e) {}
 
-      // 2. YouTubeの動画IDやURLの判定
       const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
       const match = url.match(regExp);
       if (match && match[2].length === 11) {
-        return { type: 'youtube', id: match[2], original: url };
+        return { type: 'youtube', id: match[2] };
       }
 
-      // 3. 動画ID単体（11桁）の場合
       if (url.length === 11 && /^[a-zA-Z0-9_-]+$/.test(url)) {
-        return { type: 'youtube', id: url, original: `https://www.youtube.com/watch?v=${url}` };
+        return { type: 'youtube', id: url };
       }
 
-      // 4. その他のURL（Canvaの共有リンクや、その他の埋め込み用URLなど）
       return { type: 'other', url: url };
     }
 
-    // 動画変更処理
+    // 動画変更
     function changeBgm() {
       const inputVal = ytUrlInput.value.trim();
       if (!inputVal) return;
@@ -416,12 +416,10 @@
       const result = parseVideoUrl(inputVal);
 
       if (result.type === 'youtube') {
-        // YouTubeの場合
         bgmIframe.src = `https://www.youtube.com/embed/${result.id}?enablejsapi=1`;
         ytExternalLink.href = `https://www.youtube.com/watch?v=${result.id}`;
         ytUrlInput.value = '';
       } else if (result.type === 'other') {
-        // その他のURL（Canvaなどiframeで表示可能なリンク）の場合
         bgmIframe.src = result.url;
         ytExternalLink.href = result.url;
         ytUrlInput.value = '';
@@ -445,7 +443,6 @@
       if (e.key === 'Enter') changeBgm();
     });
 
-    // 初期表示設定
     updateDisplay();
   </script>
 </body>
