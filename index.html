@@ -274,4 +274,172 @@
         id="bgmIframe"
         src="https://www.youtube.com/embed/vCTRNKPJr40?enablejsapi=1" 
         title="YouTube video player" 
-        allow="
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        referrerpolicy="strict-origin-when-cross-origin" 
+        allowfullscreen>
+      </iframe>
+    </div>
+
+    <!-- ビデオフレーム直下の操作エリア -->
+    <div class="bgm-controls">
+      <div class="bgm-input-group">
+        <input type="text" id="ytUrlInput" placeholder="YouTubeや各種URL・Googleリンクを入力">
+        <button id="changeBgmBtn">動画を変更</button>
+      </div>
+      <a id="ytExternalLink" href="https://www.youtube.com/watch?v=vCTRNKPJr40" target="_blank" class="link-btn">
+        動画で開く ↗
+      </a>
+    </div>
+  </section>
+
+  <script>
+    const WORK_TIME = 25 * 60; // 25分（秒単位）
+    const BREAK_TIME = 5 * 60;  // 5分（秒単位）
+
+    let timeLeft = WORK_TIME;
+    let timerId = null;
+    let isWorkMode = true;
+
+    const timerDisplay = document.getElementById('timer');
+    const statusDisplay = document.getElementById('status');
+    const startBtn = document.getElementById('startBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const bgmIframe = document.getElementById('bgmIframe');
+    const ytUrlInput = document.getElementById('ytUrlInput');
+    const changeBgmBtn = document.getElementById('changeBgmBtn');
+    const ytExternalLink = document.getElementById('ytExternalLink');
+
+    // 時間の表示を更新 (MM:SS)
+    function updateDisplay() {
+      const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+      const seconds = (timeLeft % 60).toString().padStart(2, '0');
+      timerDisplay.textContent = `${minutes}:${seconds}`;
+      document.title = `${minutes}:${seconds} - ${isWorkMode ? '勉強中' : '休憩中'}`;
+    }
+
+    // タイマーのカウントダウン処理
+    function startTimer() {
+      if (timerId !== null) return; // 既に実行中の場合は何もしない
+
+      startBtn.textContent = '一時停止';
+      
+      timerId = setInterval(() => {
+        timeLeft--;
+        updateDisplay();
+
+        if (timeLeft <= 0) {
+          clearInterval(timerId);
+          timerId = null;
+          
+          // 勉強と休憩を自動切り替え
+          isWorkMode = !isWorkMode;
+          if (isWorkMode) {
+            timeLeft = WORK_TIME;
+            statusDisplay.textContent = 'STUDY TIME';
+            document.body.classList.remove('break-mode');
+          } else {
+            timeLeft = BREAK_TIME;
+            statusDisplay.textContent = 'BREAK TIME';
+            document.body.classList.add('break-mode');
+          }
+          
+          updateDisplay();
+          startTimer(); // 次のセッションを自動スタート
+        }
+      }, 1000);
+    }
+
+    // タイマーの停止
+    function pauseTimer() {
+      clearInterval(timerId);
+      timerId = null;
+      startBtn.textContent = '開始';
+    }
+
+    // タイマーのリセット
+    function resetTimer() {
+      pauseTimer();
+      isWorkMode = true;
+      timeLeft = WORK_TIME;
+      statusDisplay.textContent = 'STUDY TIME';
+      document.body.classList.remove('break-mode');
+      updateDisplay();
+    }
+
+    // 入力されたURLからGoogleのリダイレクトを解除し、最適なURL/動画IDを判別する関数
+    function parseVideoUrl(input) {
+      if (!input) return null;
+      let url = input.trim();
+
+      // 1. GoogleのリダイレクトURL (google.com/url?q=... や ?url=...) から中の実際のURLを抽出する処理
+      try {
+        if (url.includes('google.com/') && (url.includes('q=') || url.includes('url='))) {
+          const tempUrl = url.startsWith('http') ? url : 'https://' + url;
+          const parsedObj = new URL(tempUrl);
+          const targetUrl = parsedObj.searchParams.get('q') || parsedObj.searchParams.get('url');
+          if (targetUrl) {
+            url = decodeURIComponent(targetUrl);
+          }
+        }
+      } catch (e) {
+        // パースエラー時はそのまま進める
+      }
+
+      // 2. YouTubeの動画IDやURLの判定
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      if (match && match[2].length === 11) {
+        return { type: 'youtube', id: match[2], original: url };
+      }
+
+      // 3. 動画ID単体（11桁）の場合
+      if (url.length === 11 && /^[a-zA-Z0-9_-]+$/.test(url)) {
+        return { type: 'youtube', id: url, original: `https://www.youtube.com/watch?v=${url}` };
+      }
+
+      // 4. その他のURL（Canvaの共有リンクや、その他の埋め込み用URLなど）
+      return { type: 'other', url: url };
+    }
+
+    // 動画変更処理
+    function changeBgm() {
+      const inputVal = ytUrlInput.value.trim();
+      if (!inputVal) return;
+
+      const result = parseVideoUrl(inputVal);
+
+      if (result.type === 'youtube') {
+        // YouTubeの場合
+        bgmIframe.src = `https://www.youtube.com/embed/${result.id}?enablejsapi=1`;
+        ytExternalLink.href = `https://www.youtube.com/watch?v=${result.id}`;
+        ytUrlInput.value = '';
+      } else if (result.type === 'other') {
+        // その他のURL（Canvaなどiframeで表示可能なリンク）の場合
+        bgmIframe.src = result.url;
+        ytExternalLink.href = result.url;
+        ytUrlInput.value = '';
+      } else {
+        alert('正しいURLを入力してください。');
+      }
+    }
+
+    // イベントリスナー
+    startBtn.addEventListener('click', () => {
+      if (timerId === null) {
+        startTimer();
+      } else {
+        pauseTimer();
+      }
+    });
+
+    resetBtn.addEventListener('click', resetTimer);
+    changeBgmBtn.addEventListener('click', changeBgm);
+    ytUrlInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') changeBgm();
+    });
+
+    // 初期表示設定
+    updateDisplay();
+  </script>
+</body>
+</html>
