@@ -2,10 +2,10 @@
 <html lang="ja">
 <head>
   <!-- タブアイコン（ファビコン）設定 -->
-<link rel="icon" href="icon.jpg" type="image/jpeg">
+  <link rel="icon" href="icon.jpg" type="image/jpeg">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JIRO　HUB - ホーム</title>
+  <title>JIRO HUB - ホーム</title>
   
   <!-- タブアイコン（ファビコン）の画像名を指定 -->
   <link rel="icon" href="favicon.png" type="image/png">
@@ -42,18 +42,46 @@
       background-color: var(--bg-break);
     }
 
-    /* 全ページ共通ヘッダー */
+    /* ヘッダーグループ（上部バー ＋ メインヘッダー） */
+    .header-group {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+    }
+
+    /* 上部サブバー */
+    .top-bar {
+      height: 32px;
+      background-color: rgba(5, 5, 5, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 24px;
+      gap: 16px;
+      font-size: 0.85rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .top-bar a {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .top-bar a:hover {
+      color: #ffffff;
+    }
+
+    /* メインヘッダー */
     header {
       height: 60px;
       padding: 0 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      position: sticky;
-      top: 0;
-      background-color: rgba(10, 10, 10, 0.6);
+      background-color: rgba(10, 10, 10, 0.8);
       backdrop-filter: blur(10px);
-      z-index: 100;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
@@ -73,13 +101,20 @@
       font-size: 1.4rem;
     }
 
+    /* HUB部分（オレンジ色の角丸四角タグ＋白文字デザイン） */
     .logo-text span {
-      color: var(--accent-orange);
+      background-color: var(--accent-orange);
+      color: #ffffff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 4px;
+      font-size: 1.1rem;
+      letter-spacing: 0;
     }
 
-    /* セクション1：タイマーエリア（画面いっぱいに表示して動画を隠す） */
+    /* セクション1：タイマーエリア（ヘッダー全体の高さ92pxを引く） */
     .timer-section {
-      min-height: calc(100vh - 60px);
+      min-height: calc(100vh - 92px);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -210,13 +245,22 @@
 </head>
 <body>
 
-  <!-- 全ページ共通ヘッダー -->
-  <header>
-    <a href="index.html" class="logo">
-      <span class="logo-icon">▶</span>
-      <span class="logo-text">JIRO<span>HUB</span></span>
-    </a>
-  </header>
+  <!-- 全ページ共通ヘッダーグループ -->
+  <div class="header-group">
+    <!-- 上部サブバー -->
+    <div class="top-bar">
+      <a href="about.html">このサイトについて</a>
+      <a href="disclaimer.html">免責事項</a>
+    </div>
+
+    <!-- メインヘッダー -->
+    <header>
+      <a href="index.html" class="logo">
+        <span class="logo-icon">▶</span>
+        <span class="logo-text">JIRO<span>HUB</span></span>
+      </a>
+    </header>
+  </div>
 
   <!-- タイマーエリア（画面を開いた時点ではこれだけが見える） -->
   <section class="timer-section">
@@ -246,11 +290,11 @@
     <!-- ビデオフレーム直下の操作エリア -->
     <div class="bgm-controls">
       <div class="bgm-input-group">
-        <input type="text" id="ytUrlInput" placeholder="YouTubeのURLまたは動画IDを入力">
+        <input type="text" id="ytUrlInput" placeholder="YouTubeや各種URL・Googleリンクを入力">
         <button id="changeBgmBtn">動画を変更</button>
       </div>
       <a id="ytExternalLink" href="https://www.youtube.com/watch?v=vCTRNKPJr40" target="_blank" class="link-btn">
-        YouTubeで開く ↗
+        動画で開く ↗
       </a>
     </div>
   </section>
@@ -329,12 +373,39 @@
       updateDisplay();
     }
 
-    // YouTubeのURLやIDから動画IDを抽出する関数
-    function extractVideoId(url) {
-      if (!url) return null;
+    // 入力されたURLからGoogleのリダイレクトを解除し、最適なURL/動画IDを判別する関数
+    function parseVideoUrl(input) {
+      if (!input) return null;
+      let url = input.trim();
+
+      // 1. GoogleのリダイレクトURL (google.com/url?q=... や ?url=...) から中の実際のURLを抽出する処理
+      try {
+        if (url.includes('google.com/') && (url.includes('q=') || url.includes('url='))) {
+          const tempUrl = url.startsWith('http') ? url : 'https://' + url;
+          const parsedObj = new URL(tempUrl);
+          const targetUrl = parsedObj.searchParams.get('q') || parsedObj.searchParams.get('url');
+          if (targetUrl) {
+            url = decodeURIComponent(targetUrl);
+          }
+        }
+      } catch (e) {
+        // パースエラー時はそのまま進める
+      }
+
+      // 2. YouTubeの動画IDやURLの判定
       const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
       const match = url.match(regExp);
-      return (match && match[2].length === 11) ? match[2] : url.trim();
+      if (match && match[2].length === 11) {
+        return { type: 'youtube', id: match[2], original: url };
+      }
+
+      // 3. 動画ID単体（11桁）の場合
+      if (url.length === 11 && /^[a-zA-Z0-9_-]+$/.test(url)) {
+        return { type: 'youtube', id: url, original: `https://www.youtube.com/watch?v=${url}` };
+      }
+
+      // 4. その他のURL（Canvaの共有リンクや、その他の埋め込み用URLなど）
+      return { type: 'other', url: url };
     }
 
     // 動画変更処理
@@ -342,15 +413,20 @@
       const inputVal = ytUrlInput.value.trim();
       if (!inputVal) return;
 
-      const videoId = extractVideoId(inputVal);
-      if (videoId && videoId.length === 11) {
-        // iframeの動画を差し替え
-        bgmIframe.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1`;
-        // 外部リンクのURLも更新
-        ytExternalLink.href = `https://www.youtube.com/watch?v=${videoId}`;
+      const result = parseVideoUrl(inputVal);
+
+      if (result.type === 'youtube') {
+        // YouTubeの場合
+        bgmIframe.src = `https://www.youtube.com/embed/${result.id}?enablejsapi=1`;
+        ytExternalLink.href = `https://www.youtube.com/watch?v=${result.id}`;
+        ytUrlInput.value = '';
+      } else if (result.type === 'other') {
+        // その他のURL（Canvaなどiframeで表示可能なリンク）の場合
+        bgmIframe.src = result.url;
+        ytExternalLink.href = result.url;
         ytUrlInput.value = '';
       } else {
-        alert('正しいYouTubeのURLまたは動画IDを入力してください。');
+        alert('正しいURLを入力してください。');
       }
     }
 
