@@ -7,15 +7,16 @@
   
   <!-- タブアイコン（ファビコン）設定 -->
   <link rel="icon" href="icon.jpg" type="image/jpeg">
+  <link rel="icon" href="favicon.png" type="image/png">
 
   <style>
     :root {
-      --bg-main: #0a0a0a;         /* 極限まで黒に近いダーク背景 */
-      --card-bg: #141414;         /* カード背景 */
-      --card-hover: #1f1f1f;      /* カードホバー時 */
-      --text-main: #ffffff;       /* 完全な白文字 */
-      --text-sub: #a0a0a0;        /* 補足用グレー文字 */
-      --accent-orange: #ff6b00;   /* 鮮やかな差し色オレンジ */
+      --bg-main: #0a0a0a;          /* 極限まで黒に近いダーク背景 */
+      --card-bg: #141414;          /* カード背景 */
+      --card-hover: #1f1f1f;       /* カードホバー時 */
+      --text-main: #ffffff;        /* 完全な白文字 */
+      --text-sub: #a0a0a0;         /* 補足用グレー文字 */
+      --accent-orange: #ff6b00;    /* 鮮やかな差し色オレンジ */
       --accent-orange-hover: #ff8533;
     }
 
@@ -29,6 +30,9 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background-color: var(--bg-main);
       color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     /* 固定ヘッダーグループ */
@@ -106,12 +110,14 @@
       padding: 28px 24px;
       max-width: 1200px;
       margin: 0 auto;
+      flex: 1;
+      width: 100%;
     }
 
     .video-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 20px 20px;
+      gap: 20px;
     }
 
     .video-card {
@@ -140,6 +146,9 @@
       background-color: #1a1a1a;
       border-radius: 8px;
       overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .thumbnail-img {
@@ -167,6 +176,7 @@
       border-radius: 4px;
       font-weight: 700;
       letter-spacing: 0.5px;
+      z-index: 2;
     }
 
     .video-info {
@@ -240,58 +250,74 @@
   </div>
 
   <main>
-    <div class="video-grid">
-
-      <!-- カード 1: ポモドーロタイマー -->
-      <a href="pomodoro.html" class="video-card">
-        <div class="thumbnail-container">
-          <img src="thumbnail1.png" alt="ポモドーロタイマー" class="thumbnail-img">
-          <div class="duration-badge">タイマー</div>
-        </div>
-        <div class="video-info">
-          <div class="channel-icon">🍅</div>
-          <div class="details">
-            <div class="video-title">25分/5分 ポモドーロタイマー【集中＆休憩自動切り替え】</div>
-            <div class="channel-name">ワークスペース</div>
-            <div class="video-stats">いつでも利用可能</div>
-          </div>
-        </div>
-      </a>
-
-       <!-- カード 2: ながいポモドーロタイマー -->
-      <a href="long-pomodoro.html" class="video-card">
-        <div class="thumbnail-container">
-          <img src="50min.png" alt="ポモドーロタイマー" class="thumbnail-img">
-          <div class="duration-badge">タイマー</div>
-        </div>
-        <div class="video-info">
-          <div class="channel-icon">🍅</div>
-          <div class="details">
-            <div class="video-title">50/10 もぎポモドーロタイマー【集中＆休憩自動切り替え】</div>
-            <div class="channel-name">ワークスペース</div>
-            <div class="video-stats">いつでも利用可能</div>
-          </div>
-        </div>
-      </a>
-
-      <!-- カード 2: YouTube公式 -->
-      <a href="https://www.youtube.com" target="_blank" class="video-card">
-        <div class="thumbnail-container">
-          <img src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&w=600&q=80" alt="YouTube" class="thumbnail-img">
-          <div class="duration-badge">外部</div>
-        </div>
-        <div class="video-info">
-          <div class="channel-icon">🌐</div>
-          <div class="details">
-            <div class="video-title">YouTube 本家サイトを開く（別タブ）</div>
-            <div class="channel-name">YouTube.com</div>
-            <div class="video-stats">公式リンク</div>
-          </div>
-        </div>
-      </a>
-
+    <div class="video-grid" id="cardGrid">
+      <!-- JavaScriptでカードが自動生成されます -->
     </div>
   </main>
+
+  <script>
+    // ==========================================
+    // 📂 ページ一覧（ここに増やすだけで勝手にカードになります）
+    // ==========================================
+    const sitePages = [
+      {
+        url: "pomodoro.html",
+        title: "25分/5分 ポモドーロタイマー【集中＆休憩自動切り替え】",
+        category: "タイマー",
+        icon: "🍅",
+        categoryName: "ワークスペース",
+        stats: "いつでも利用可能",
+        thumbnail: "25.png" // ポモドーロ用サムネイル
+      },
+      {
+        url: "test-result.html",
+        title: "9教科 テスト成績管理・自己採点＆返却点数集計シート",
+        category: "学習ツール",
+        icon: "📝",
+        categoryName: "テスト対策",
+        stats: "自動保存対応",
+        thumbnail: "50.png" // 50点満点対応のテスト成績用サムネイル
+      },
+      {
+        url: "https://www.youtube.com",
+        title: "YouTube 本家サイトを開く（別タブ）",
+        category: "外部",
+        icon: "🌐",
+        categoryName: "YouTube.com",
+        stats: "公式リンク",
+        isExternal: true,
+        thumbnail: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&w=600&q=80"
+      }
+    ];
+
+    const gridContainer = document.getElementById('cardGrid');
+
+    sitePages.forEach(page => {
+      const card = document.createElement('a');
+      card.href = page.url;
+      card.className = 'video-card';
+      if (page.isExternal) {
+        card.target = '_blank';
+      }
+
+      card.innerHTML = `
+        <div class="thumbnail-container">
+          <img src="${page.thumbnail}" alt="${page.title}" class="thumbnail-img" onerror="this.style.display='none'">
+          <div class="duration-badge">${page.category}</div>
+        </div>
+        <div class="video-info">
+          <div class="channel-icon">${page.icon}</div>
+          <div class="details">
+            <div class="video-title">${page.title}</div>
+            <div class="channel-name">${page.categoryName}</div>
+            <div class="video-stats">${page.stats}</div>
+          </div>
+        </div>
+      `;
+
+      gridContainer.appendChild(card);
+    });
+  </script>
 
 </body>
 </html>
