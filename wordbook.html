@@ -314,4 +314,144 @@
       // Unit 5
       { en: "internet", jp: "[名] インターネット", unit: "Unit 5" },
       { en: "person", jp: "[名] 人、個人", unit: "Unit 5" },
-      { en: "image", jp: "
+      { en: "image", jp: "[名] 像、肖像、印象", unit: "Unit 5" },
+      { en: "print(ed)", jp: "[動] …を印刷する", unit: "Unit 5" },
+      { en: "leader", jp: "[名] 指導者、リーダー", unit: "Unit 5" },
+      { en: "greatly", jp: "[副] おおいに、非常に", unit: "Unit 5" },
+      { en: "born", jp: "[動] (be born) 生まれる", unit: "Unit 5" },
+      { en: "national", jp: "[形] 国の", unit: "Unit 5" },
+      { en: "non-violence", jp: "[名] 非暴力", unit: "Unit 5" },
+      { en: "independence", jp: "[名] 独立", unit: "Unit 5" },
+      { en: "violence", jp: "[名] 暴力", unit: "Unit 5" },
+      { en: "fight", jp: "[動] たたかう", unit: "Unit 5" },
+      { en: "protest", jp: "[動] 抗議する", unit: "Unit 5" },
+      { en: "tough", jp: "[形] 困難な、難しい", unit: "Unit 5" },
+      { en: "human rights", jp: "人権", unit: "Unit 5" },
+      { en: "lawyer", jp: "[名] 弁護士", unit: "Unit 5" },
+      { en: "British", jp: "[形] イギリスの / [名] イギリス人", unit: "Unit 5" },
+      { en: "discrimination", jp: "[名] 差別", unit: "Unit 5" },
+      { en: "freely", jp: "[副] 自由に", unit: "Unit 5" },
+      { en: "sidewalk", jp: "[名] 歩道", unit: "Unit 5" },
+      { en: "accept", jp: "[動] …を受け入れる", unit: "Unit 5" },
+      { en: "law", jp: "[名] 法律、法", unit: "Unit 5" },
+      { en: "unfair", jp: "[形] 不公平な", unit: "Unit 5" },
+      { en: "stood", jp: "[動] standの過去形", unit: "Unit 5" },
+      { en: "arrest(ed)", jp: "[動] …を逮捕する", unit: "Unit 5" },
+      { en: "jail(s)", jp: "[名] 刑務所", unit: "Unit 5" },
+      { en: "colony", jp: "[名] 植民地", unit: "Unit 5" },
+      { en: "produce", jp: "[動] …を生産する", unit: "Unit 5" },
+      { en: "tax", jp: "[名] 税、税金", unit: "Unit 5" },
+      { en: "expensive", jp: "[形] 高価な", unit: "Unit 5" },
+      { en: "follower(s)", jp: "[名] 信奉者、支持者", unit: "Unit 5" },
+      { en: "thousand(s)", jp: "[名][形] 1,000(の)", unit: "Unit 5" }
+    ];
+
+    let currentWords = [...originalWords];
+    let currentIndex = 0;
+    let isAnswerShown = false;      // 答えが表示されているか
+    let isJpToEn = true;            // true: 日➔英, false: 英➔日
+    let isShuffle = false;           // true: ごちゃまぜ, false: 教科書順
+
+    const cardContent = document.getElementById('cardContent');
+    const cardLabel = document.getElementById('cardLabel');
+    const cardHint = document.getElementById('cardHint');
+    const progressInfo = document.getElementById('progressInfo');
+    const modeBtn = document.getElementById('modeBtn');
+    const orderBtn = document.getElementById('orderBtn');
+
+    // 表示の更新
+    function updateCard() {
+      const currentWord = currentWords[currentIndex];
+      progressInfo.textContent = `${currentWord.unit} (${currentIndex + 1} / ${currentWords.length})`;
+
+      if (isJpToEn) {
+        // 日本語 ➔ 英語モード
+        if (!isAnswerShown) {
+          cardLabel.textContent = "日本語訳（問題）";
+          cardContent.textContent = currentWord.jp;
+          cardHint.textContent = "クリックして英語を表示";
+        } else {
+          cardLabel.textContent = "英語 (答え)";
+          cardContent.textContent = currentWord.en;
+          cardHint.textContent = "クリックして次の単語へ";
+        }
+      } else {
+        // 英語 ➔ 日本語モード
+        if (!isAnswerShown) {
+          cardLabel.textContent = "英語 (問題)";
+          cardContent.textContent = currentWord.en;
+          cardHint.textContent = "クリックして日本語を表示";
+        } else {
+          cardLabel.textContent = "日本語訳（答え）";
+          cardContent.textContent = currentWord.jp;
+          cardHint.textContent = "クリックして次の単語へ";
+        }
+      }
+    }
+
+    // カードクリック時の動作
+    function handleCardClick() {
+      if (!isAnswerShown) {
+        isAnswerShown = true;
+        updateCard();
+      } else {
+        isAnswerShown = false;
+        currentIndex = (currentIndex + 1) % currentWords.length;
+        updateCard();
+      }
+    }
+
+    // モード切替（日➔英 ↔ 英➔日）
+    function toggleMode() {
+      isJpToEn = !isJpToEn;
+      isAnswerShown = false;
+      if (isJpToEn) {
+        modeBtn.textContent = "モード: 日本語 ➔ 英語";
+        modeBtn.classList.add("active");
+      } else {
+        modeBtn.textContent = "モード: 英語 ➔ 日本語";
+        modeBtn.classList.add("active");
+      }
+      updateCard();
+    }
+
+    // 順序切替（教科書順 ↔ ごちゃまぜ）
+    function toggleOrder() {
+      isShuffle = !isShuffle;
+      isAnswerShown = false;
+      currentIndex = 0;
+
+      if (isShuffle) {
+        // Fisher-Yates シャッフルアルゴリズム
+        currentWords = [...originalWords];
+        for (let i = currentWords.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [currentWords[i], currentWords[j]] = [currentWords[j], currentWords[i]];
+        }
+        orderBtn.textContent = "順序: ごちゃまぜ (シャッフル)";
+        orderBtn.classList.add("active");
+      } else {
+        currentWords = [...originalWords];
+        orderBtn.textContent = "順序: 教科書順";
+        orderBtn.classList.remove("active");
+      }
+      updateCard();
+    }
+
+    function nextCard() {
+      isAnswerShown = false;
+      currentIndex = (currentIndex + 1) % currentWords.length;
+      updateCard();
+    }
+
+    function prevCard() {
+      isAnswerShown = false;
+      currentIndex = (currentIndex - 1 + currentWords.length) % currentWords.length;
+      updateCard();
+    }
+
+    // 初期化
+    updateCard();
+  </script>
+</body>
+</html>
