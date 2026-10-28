@@ -3,16 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Unit 4 & 5 暗記単語帳</title>
+  <title>JIRO HUB - ワンクリック単語帳</title>
+  
+  <!-- タブアイコン（ファビコン）設定 -->
+  <link rel="icon" href="icon.jpg" type="image/jpeg">
+  <link rel="icon" href="favicon.png" type="image/png">
+
   <style>
     :root {
-      --bg-color: #0a0a0a;
+      --bg-work: #0a0a0a;          /* 極黒ダーク背景 */
       --card-bg: #141414;
-      --card-hover: #1f1f1f;
-      --text-main: #ffffff;
-      --text-sub: #a0a0a0;
-      --accent-orange: #ff6b00;
-      --accent-green: #2ecc71;
+      --text-main: #ffffff;        /* 完全な白文字 */
+      --text-sub: #a0a0a0;         /* 補足用グレー文字 */
+      --btn-bg: rgba(255, 255, 255, 0.1);
+      --btn-hover: rgba(255, 255, 255, 0.2);
+      --accent-orange: #ff6b00;    /* 鮮やかな差し色オレンジ */
+      --accent-orange-hover: #ff8533;
     }
 
     * {
@@ -22,271 +28,339 @@
     }
 
     body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: var(--bg-color);
       color: var(--text-main);
-      padding: 20px;
-      max-width: 900px;
-      margin: 0 auto;
+      background-color: var(--bg-work);
+    }
+
+    /* 固定ヘッダーグループ（ポモドーロ等と完全共通） */
+    .header-group {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background-color: rgba(10, 10, 10, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #1f1f1f;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 16px;
+      padding: 6px 24px;
+      background-color: rgba(0, 0, 0, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.75rem;
+    }
+
+    .top-bar a {
+      color: var(--text-sub);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .top-bar a:hover {
+      color: var(--text-main);
     }
 
     header {
-      text-align: center;
-      margin-bottom: 24px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid #222;
+      height: 54px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
-    h1 {
-      font-size: 1.6rem;
-      margin-bottom: 8px;
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: var(--text-main);
+      text-decoration: none;
+      letter-spacing: -0.5px;
     }
 
-    p.subtitle {
-      font-size: 0.85rem;
-      color: var(--text-sub);
-    }
-
-    .unit-title {
-      font-size: 1.2rem;
+    .logo-icon {
       color: var(--accent-orange);
-      margin: 24px 0 12px 0;
-      padding-left: 8px;
-      border-left: 4px solid var(--accent-orange);
+      font-size: 1.4rem;
     }
 
-    .word-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 12px;
+    .logo-text span {
+      background-color: var(--accent-orange);
+      color: #000000;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9em;
+      margin-left: 4px;
+      display: inline-block;
+      line-height: 1.2;
+      font-weight: 900;
     }
 
-    .word-card {
-      background-color: var(--card-bg);
-      border: 1px solid #222;
-      border-radius: 8px;
-      padding: 16px;
-      cursor: pointer;
-      user-select: none;
-      transition: all 0.2s ease;
+    /* メインコンテンツ（画面中央にカードを配置） */
+    .flashcard-section {
+      flex: 1;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      min-height: 90px;
-    }
-
-    .word-card:hover {
-      background-color: var(--card-hover);
-      border-color: rgba(255, 107, 0, 0.4);
-      transform: translateY(-2px);
-    }
-
-    .word-header {
-      display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-      margin-bottom: 8px;
+      padding: 20px;
     }
 
-    .word-num {
-      font-size: 0.75rem;
+    .progress-info {
+      font-size: 0.9rem;
       color: var(--text-sub);
+      margin-bottom: 16px;
+      letter-spacing: 0.05em;
     }
 
-    .english {
-      font-size: 1.15rem;
+    /* フラッシュカード本体 */
+    .card {
+      width: 100%;
+      max-width: 500px;
+      height: 300px;
+      background-color: var(--card-bg);
+      border: 2px solid #262626;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+      transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+      position: relative;
+      user-select: none;
+    }
+
+    .card:hover {
+      border-color: var(--accent-orange);
+      transform: translateY(-3px);
+      background-color: #181818;
+    }
+
+    .card-label {
+      position: absolute;
+      top: 20px;
+      left: 24px;
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .card-content {
+      font-size: 2rem;
       font-weight: 700;
+      line-height: 1.4;
+      word-break: break-all;
+    }
+
+    .card-hint {
+      position: absolute;
+      bottom: 20px;
+      font-size: 0.85rem;
+      color: var(--accent-orange);
+    }
+
+    /* 操作ボタンエリア */
+    .nav-controls {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    button {
+      background: var(--btn-bg);
       color: var(--text-main);
-    }
-
-    .japanese {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0.6rem 1.6rem;
       font-size: 0.95rem;
-      color: var(--accent-green);
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.2s ease;
       font-weight: 600;
-      margin-top: 6px;
-      padding-top: 6px;
-      border-top: 1px dashed #333;
-      display: none; /* 初期状態では非表示 */
     }
 
-    /* クリック時に意味を表示 */
-    .word-card.show .japanese {
-      display: block;
-    }
-
-    .word-card.show {
-      border-color: var(--accent-green);
+    button:hover {
+      background: var(--btn-hover);
+      border-color: var(--accent-orange);
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>JIRO HUB - 英語暗記単語帳</h1>
-    <p class="subtitle">カードをクリック（タップ）すると日本語訳が表示・非表示されます</p>
-  </header>
+  <!-- ヘッダーグループ -->
+  <div class="header-group">
+    <div class="top-bar">
+      <a href="about.html">このサイトについて</a>
+      <a href="disclaimer.html">免責事項</a>
+    </div>
 
-  <main id="wordbook-container"></main>
+    <header>
+      <a href="index.html" class="logo">
+        <span class="logo-icon">▶</span>
+        <span class="logo-text">JIRO<span>HUB</span></span>
+      </a>
+    </header>
+  </div>
+
+  <!-- フラッシュカードエリア -->
+  <section class="flashcard-section">
+    <div class="progress-info" id="progressInfo">Unit 4 & 5 (1 / 61)</div>
+    
+    <div class="card" id="flashcard" onclick="handleCardClick()">
+      <div class="card-label" id="cardLabel">日本語訳</div>
+      <div class="card-content" id="cardContent">読み込み中...</div>
+      <div class="card-hint">クリックして英語を表示</div>
+    </div>
+
+    <div class="nav-controls">
+      <button onclick="prevCard()">前の単語</button>
+      <button onclick="nextCard()">次の単語</button>
+    </div>
+  </section>
 
   <script>
-    // 写真から読み取った単語データ一覧
-    const wordData = [
-      // --- Unit 4 ---
-      { num: 1, en: "prepared", jp: "[形] 用意ができている、備えた", unit: "Unit 4 - Part 1" },
-      { num: 2, en: "disaster", jp: "[名] 災害", unit: "Unit 4 - Part 1" },
-      { num: 3, en: "shelter", jp: "[名] 避難所", unit: "Unit 4 - Part 1" },
-      { num: 4, en: "store", jp: "[動] …を蓄える", unit: "Unit 4 - Part 1" },
-      { num: 5, en: "case", jp: "[名] 場合", unit: "Unit 4 - Part 1" },
-      { num: 6, en: "extinguisher", jp: "[名] 消火器", unit: "Unit 4 - Part 1" },
-      { num: 7, en: "in case of", jp: "…の場合には", unit: "Unit 4 - Part 1" },
-      { num: 18, en: "encourage(d)", jp: "[動] …を勇気づける、励ます", unit: "Unit 4 - Part 1" },
-      { num: 19, en: "personality", jp: "[名] 個性、性格、人格", unit: "Unit 4 - Part 1" },
-      { num: 20, en: "hit", jp: "[動] hitの過去形", unit: "Unit 4 - Part 1" },
-      { num: 21, en: "hit", jp: "[動] (災害・不幸などが)襲う", unit: "Unit 4 - Part 1" },
-      { num: 22, en: "comfort(ed)", jp: "[動] …を慰める、元気づける", unit: "Unit 4 - Part 1" },
-      { num: 23, en: "nearby", jp: "[形] 近くの", unit: "Unit 4 - Part 1" },
-      { num: 24, en: "safe", jp: "[形] 安全な", unit: "Unit 4 - Part 1" },
-      { num: 25, en: "all the time", jp: "常に", unit: "Unit 4 - Part 1" },
-
-      { num: 8, en: "done", jp: "[動] doの過去分詞", unit: "Unit 4 - Part 2" },
-      { num: 9, en: "prepare", jp: "[動] (…の)準備をする、備える", unit: "Unit 4 - Part 2" },
-      { num: 10, en: "emergency", jp: "[名] 緊急事態", unit: "Unit 4 - Part 2" },
-      { num: 11, en: "kit", jp: "[名] 道具[用具]一式", unit: "Unit 4 - Part 2" },
-      { num: 12, en: "recommend(ed)", jp: "[動] …をすすめる、…を推薦する", unit: "Unit 4 - Part 2" },
-      { num: 13, en: "earthquake", jp: "[名] 地震", unit: "Unit 4 - Part 2" },
-
-      { num: 14, en: "several", jp: "[形] いくつかの", unit: "Unit 4 - Read and Think 1 ①" },
-      { num: 15, en: "bridge", jp: "[名] 橋、かけ橋", unit: "Unit 4 - Read and Think 1 ①" },
-      { num: 16, en: "between", jp: "[前] [between ... and ~] (…と~)の間で", unit: "Unit 4 - Read and Think 1 ①" },
-      { num: 17, en: "energetic", jp: "[形] 精力的な、エネルギッシュな、活発な", unit: "Unit 4 - Read and Think 1 ①" },
-
-      { num: 26, en: "rode", jp: "[動] rideの過去形", unit: "Unit 4 - Read and Think 1 ②" },
-      { num: 27, en: "bicycle", jp: "[名] 自転車", unit: "Unit 4 - Read and Think 1 ②" },
-      { num: 28, en: "toward", jp: "[前] …のほうへ、…に向かって", unit: "Unit 4 - Read and Think 1 ②" },
-      { num: 29, en: "apartment", jp: "[名] アパート[マンション]の部屋", unit: "Unit 4 - Read and Think 1 ②" },
-      { num: 30, en: "caught", jp: "[動] catchの過去形・過去分詞", unit: "Unit 4 - Read and Think 1 ②" },
-      { num: 31, en: "tsunami", jp: "[名] 津波", unit: "Unit 4 - Read and Think 1 ②" },
-      { num: 32, en: "sudden", jp: "[形] 突然の、不意の", unit: "Unit 4 - Read and Think 1 ②" },
-      { num: 33, en: "news", jp: "[名] ニュース、知らせ", unit: "Unit 4 - Read and Think 1 ②" },
-      { num: 34, en: "shortly", jp: "[副] まもなく、すぐに", unit: "Unit 4 - Read and Think 1 ②" },
-      { num: 35, en: "corner", jp: "[名] コーナー", unit: "Unit 4 - Read and Think 1 ②" },
-      { num: 36, en: "exchange", jp: "[名] 交流、やりとり", unit: "Unit 4 - Read and Think 1 ②" },
-      { num: 37, en: "program(s)", jp: "[名] 計画、事業", unit: "Unit 4 - Read and Think 1 ②" },
-
-      { num: 38, en: "support", jp: "[動] …を支援する、応援する", unit: "Unit 4 - 続き" },
-      { num: 39, en: "ordinary", jp: "[形] ふつの", unit: "Unit 4 - 続き" },
-      { num: 40, en: "crisis", jp: "[名] 危機、難局、(病気の)峠", unit: "Unit 4 - 続き" },
-      { num: 41, en: "be caught in", jp: "…に巻き込まれる", unit: "Unit 4 - 続き" },
-      { num: 42, en: "bring ... together", jp: "…を団結させる", unit: "Unit 4 - 続き" },
-      { num: 43, en: "keep on ...ing", jp: "…し続ける", unit: "Unit 4 - 続き" },
-      { num: 44, en: "no longer", jp: "もはや…ない", unit: "Unit 4 - 続き" },
-      { num: 45, en: "That's very kind of you.", jp: "どうもご親切にありがとうございます。", unit: "Unit 4 - Real Life English 4" },
-      { num: 46, en: "would like ... to ~", jp: "…に~してほしい(のですが)", unit: "Unit 4 - Real Life English 4" },
-
-      // --- Unit 5 ---
-      { num: 1, en: "internet", jp: "[名] インターネット", unit: "Unit 5 - Part 1" },
-      { num: 2, en: "person", jp: "[名] 人、個人", unit: "Unit 5 - Part 1" },
-      { num: 3, en: "image", jp: "[名] 像、肖像、印象", unit: "Unit 5 - Part 1" },
-      { num: 4, en: "print(ed)", jp: "[動] …を印刷する", unit: "Unit 5 - Part 1" },
-      { num: 5, en: "leader", jp: "[名] 指導者、リーダー", unit: "Unit 5 - Part 1" },
-      { num: 6, en: "greatly", jp: "[副] おおいに、非常に", unit: "Unit 5 - Part 1" },
-      { num: 7, en: "born", jp: "[動] (be born) 生まれる", unit: "Unit 5 - Part 1" },
-      { num: 8, en: "national", jp: "[形] 国の", unit: "Unit 5 - Part 1" },
-      { num: 9, en: "non-violence", jp: "[名] 非暴力", unit: "Unit 5 - Part 1" },
-      { num: 10, en: "on the internet", jp: "インターネットで", unit: "Unit 5 - Part 1" },
-      { num: 20, en: "discrimination", jp: "[名] 差別", unit: "Unit 5 - Part 1" },
-      { num: 21, en: "freely", jp: "[副] 自由", unit: "Unit 5 - Part 1" },
-      { num: 22, en: "sidewalk", jp: "[名] 歩道", unit: "Unit 5 - Part 1" },
-      { num: 23, en: "accept", jp: "[動] …を受け入れる", unit: "Unit 5 - Part 1" },
-      { num: 24, en: "law", jp: "[名] 法律、法", unit: "Unit 5 - Part 1" },
-      { num: 25, en: "unfair", jp: "[形] 不公平な、不当な", unit: "Unit 5 - Part 1" },
-      { num: 26, en: "stood", jp: "[動] standの過去形", unit: "Unit 5 - Part 1" },
-      { num: 27, en: "arrest(ed)", jp: "[動] …を逮捕する", unit: "Unit 5 - Part 1" },
-      { num: 28, en: "jail(s)", jp: "[名] 刑務所", unit: "Unit 5 - Part 1" },
-      { num: 29, en: "non-violent", jp: "[形] 非暴力の", unit: "Unit 5 - Part 1" },
-      { num: 30, en: "effective", jp: "[形] 効果的な", unit: "Unit 5 - Part 1" },
-      { num: 31, en: "at that [the] time", jp: "その当時(には)", unit: "Unit 5 - Part 1" },
-      { num: 32, en: "go out", jp: "外へ出る", unit: "Unit 5 - Part 1" },
-      { num: 33, en: "even if", jp: "たとえ…だとしても", unit: "Unit 5 - Part 1" },
-
-      { num: 11, en: "independence", jp: "[名] 独立", unit: "Unit 5 - Part 2" },
-      { num: 12, en: "violence", jp: "[名] 暴力", unit: "Unit 5 - Part 2" },
-      { num: 13, en: "fight", jp: "[動] たたかう", unit: "Unit 5 - Part 2" },
-      { num: 14, en: "protest", jp: "[動] 抗議する", unit: "Unit 5 - Part 2" },
-      { num: 15, en: "tough", jp: "[形] 困難な、難しい", unit: "Unit 5 - Part 2" },
-      { num: 16, en: "human rights", jp: "人権", unit: "Unit 5 - Part 2" },
-      { num: 17, en: "go on", jp: "…をする、始める", unit: "Unit 5 - Part 2" },
-
-      { num: 18, en: "lawyer", jp: "[名] 弁護士", unit: "Unit 5 - Read and Think 1 ①" },
-      { num: 19, en: "British", jp: "[形] イギリス[英国]の / [名] イギリス[英国]人", unit: "Unit 5 - Read and Think 1 ①" },
-
-      { num: 34, en: "colony", jp: "[名] 植民地", unit: "Unit 5 - Read and Think 1 ②" },
-      { num: 35, en: "produce", jp: "[動] …を生産する、生じる", unit: "Unit 5 - Read and Think 1 ②" },
-      { num: 36, en: "tax", jp: "[名] 税、税金", unit: "Unit 5 - Read and Think 1 ②" },
-      { num: 37, en: "expensive", jp: "[形] 高価な、費用のかかる", unit: "Unit 5 - Read and Think 1 ②" },
-      { num: 38, en: "follower(s)", jp: "[名] 信奉者、支持者", unit: "Unit 5 - Read and Think 1 ②" },
-      { num: 39, en: "thousand(s)", jp: "[名][形] 1,000(の)", unit: "Unit 5 - Read and Think 1 ②" },
-
-      { num: 40, en: "kilometer(s)", jp: "[名] キロメートル", unit: "Unit 5 - 続き" },
-      { num: 41, en: "march", jp: "[名] 行進、マーチ", unit: "Unit 5 - 続き" },
-      { num: 42, en: "peaceful", jp: "[形] 平和な", unit: "Unit 5 - 続き" },
-      { num: 43, en: "legacy", jp: "[名] 遺産", unit: "Unit 5 - 続き" },
-      { num: 44, en: "in those days", jp: "そのころは、当時は", unit: "Unit 5 - 続き" },
-      { num: 45, en: "thousands of", jp: "何千もの、多くの", unit: "Unit 5 - 続き" },
-      { num: 46, en: "way to", jp: "…する方法", unit: "Unit 5 - 続き" },
-      { num: 47, en: "text(ing)", jp: "[動] 携帯電話などでメッセージをおくる", unit: "Unit 5 - Real Life English 5" },
-      { num: 48, en: "ban(ned)", jp: "[動] …を禁止する", unit: "Unit 5 - Real Life English 5" },
-      { num: 49, en: "electronic", jp: "[形] 電子の", unit: "Unit 5 - Real Life English 5" },
-      { num: 50, en: "device", jp: "[名] 装置", unit: "Unit 5 - Real Life English 5" },
-
-      { num: 51, en: "cross", jp: "[動] …を横切る、渡る", unit: "Unit 5 - 続き②" },
-      { num: 52, en: "decision(s)", jp: "[名] 決定、結論", unit: "Unit 5 - 続き②" },
-      { num: 53, en: "bother", jp: "[名] 面倒", unit: "Unit 5 - 続き②" },
-      { num: 54, en: "common", jp: "[形] ふつの、よくある、共通の", unit: "Unit 5 - 続き②" },
-      { num: 55, en: "report", jp: "[名] 報告、レポート", unit: "Unit 5 - Stage Activity 2" },
-      { num: 56, en: "position", jp: "[名] 位置、ポジション", unit: "Unit 5 - Stage Activity 2" },
-      { num: 57, en: "setter", jp: "[名] (バレーボールの)セッター", unit: "Unit 5 - Stage Activity 2" },
-      { num: 58, en: "chance(s)", jp: "[名] 機会、チャンス", unit: "Unit 5 - Stage Activity 2" },
-      { num: 59, en: "spiker(s)", jp: "[名] (バレーボールの)スパイカー", unit: "Unit 5 - Stage Activity 2" },
-      { num: 60, en: "teammate(s)", jp: "[名] チームの仲間、チームメイト", unit: "Unit 5 - Stage Activity 2" },
-      { num: 61, en: "get the most out of", jp: "…を最大限に生かす", unit: "Unit 5 - Stage Activity 2" }
+    // 単語データ（Unit 4 & 5）
+    const words = [
+      { en: "prepared", jp: "[形] 用意ができている、備えた", unit: "Unit 4" },
+      { en: "disaster", jp: "[名] 災害", unit: "Unit 4" },
+      { en: "shelter", jp: "[名] 避難所", unit: "Unit 4" },
+      { en: "store", jp: "[動] …を蓄える", unit: "Unit 4" },
+      { en: "case", jp: "[名] 場合", unit: "Unit 4" },
+      { en: "extinguisher", jp: "[名] 消火器", unit: "Unit 4" },
+      { en: "in case of", jp: "…の場合には", unit: "Unit 4" },
+      { en: "encourage(d)", jp: "[動] …を勇気づける、励ます", unit: "Unit 4" },
+      { en: "personality", jp: "[名] 個性、性格、人格", unit: "Unit 4" },
+      { en: "hit", jp: "[動] hitの過去形", unit: "Unit 4" },
+      { en: "hit", jp: "[動] (災害・不幸などが)襲う", unit: "Unit 4" },
+      { en: "comfort(ed)", jp: "[動] …を慰める、元気づける", unit: "Unit 4" },
+      { en: "nearby", jp: "[形] 近くの", unit: "Unit 4" },
+      { en: "safe", jp: "[形] 安全な", unit: "Unit 4" },
+      { en: "all the time", jp: "常に", unit: "Unit 4" },
+      { en: "done", jp: "[動] doの過去分詞", unit: "Unit 4" },
+      { en: "prepare", jp: "[動] (…の)準備をする、備える", unit: "Unit 4" },
+      { en: "emergency", jp: "[名] 緊急事態", unit: "Unit 4" },
+      { en: "kit", jp: "[名] 道具[用具]一式", unit: "Unit 4" },
+      { en: "recommend(ed)", jp: "[動] …をすすめる、…を推薦する", unit: "Unit 4" },
+      { en: "earthquake", jp: "[名] 地震", unit: "Unit 4" },
+      { en: "several", jp: "[形] いくつかの", unit: "Unit 4" },
+      { en: "bridge", jp: "[名] 橋、かけ橋", unit: "Unit 4" },
+      { en: "between", jp: "[前] (…と~)の間で", unit: "Unit 4" },
+      { en: "energetic", jp: "[形] 精力的な、エネルギッシュな", unit: "Unit 4" },
+      { en: "rode", jp: "[動] rideの過去形", unit: "Unit 4" },
+      { en: "bicycle", jp: "[名] 自転車", unit: "Unit 4" },
+      { en: "toward", jp: "[前] …のほうへ、向かって", unit: "Unit 4" },
+      { en: "apartment", jp: "[名] アパート[マンション]の部屋", unit: "Unit 4" },
+      { en: "caught", jp: "[動] catchの過去形・過去分詞", unit: "Unit 4" },
+      { en: "tsunami", jp: "[名] 津波", unit: "Unit 4" },
+      { en: "sudden", jp: "[形] 突然の、不意の", unit: "Unit 4" },
+      { en: "news", jp: "[名] ニュース、知らせ", unit: "Unit 4" },
+      { en: "shortly", jp: "[副] まもなく、すぐに", unit: "Unit 4" },
+      { en: "corner", jp: "[名] コーナー", unit: "Unit 4" },
+      { en: "exchange", jp: "[名] 交流、やりとり", unit: "Unit 4" },
+      { en: "program(s)", jp: "[名] 計画、事業", unit: "Unit 4" },
+      { en: "support", jp: "[動] …を支援する、応援する", unit: "Unit 4" },
+      { en: "ordinary", jp: "[形] ふつの", unit: "Unit 4" },
+      { en: "crisis", jp: "[名] 危機、難局", unit: "Unit 4" },
+      { en: "be caught in", jp: "…に巻き込まれる", unit: "Unit 4" },
+      { en: "bring ... together", jp: "…を団結させる", unit: "Unit 4" },
+      { en: "keep on ...ing", jp: "…し続ける", unit: "Unit 4" },
+      { en: "no longer", jp: "もはや…ない", unit: "Unit 4" },
+      { en: "internet", jp: "[名] インターネット", unit: "Unit 5" },
+      { en: "person", jp: "[名] 人、個人", unit: "Unit 5" },
+      { en: "image", jp: "[名] 像、肖像、印象", unit: "Unit 5" },
+      { en: "print(ed)", jp: "[動] …を印刷する", unit: "Unit 5" },
+      { en: "leader", jp: "[名] 指導者、リーダー", unit: "Unit 5" },
+      { en: "greatly", jp: "[副] おおいに、非常に", unit: "Unit 5" },
+      { en: "born", jp: "[動] (be born) 生まれる", unit: "Unit 5" },
+      { en: "national", jp: "[形] 国の", unit: "Unit 5" },
+      { en: "non-violence", jp: "[名] 非暴力", unit: "Unit 5" },
+      { en: "independence", jp: "[名] 独立", unit: "Unit 5" },
+      { en: "violence", jp: "[名] 暴力", unit: "Unit 5" },
+      { en: "fight", jp: "[動] たたかう", unit: "Unit 5" },
+      { en: "protest", jp: "[動] 抗議する", unit: "Unit 5" },
+      { en: "tough", jp: "[形] 困難な、難しい", unit: "Unit 5" },
+      { en: "human rights", jp: "人権", unit: "Unit 5" },
+      { en: "lawyer", jp: "[名] 弁護士", unit: "Unit 5" },
+      { en: "British", jp: "[形] イギリスの / [名] イギリス人", unit: "Unit 5" },
+      { en: "discrimination", jp: "[名] 差別", unit: "Unit 5" },
+      { en: "freely", jp: "[副] 自由に", unit: "Unit 5" },
+      { en: "sidewalk", jp: "[名] 歩道", unit: "Unit 5" },
+      { en: "accept", jp: "[動] …を受け入れる", unit: "Unit 5" },
+      { en: "law", jp: "[名] 法律、法", unit: "Unit 5" },
+      { en: "unfair", jp: "[形] 不公平な", unit: "Unit 5" },
+      { en: "stood", jp: "[動] standの過去形", unit: "Unit 5" },
+      { en: "arrest(ed)", jp: "[動] …を逮捕する", unit: "Unit 5" },
+      { en: "jail(s)", jp: "[名] 刑務所", unit: "Unit 5" },
+      { en: "colony", jp: "[名] 植民地", unit: "Unit 5" },
+      { en: "produce", jp: "[動] …を生産する", unit: "Unit 5" },
+      { en: "tax", jp: "[名] 税、税金", unit: "Unit 5" },
+      { en: "expensive", jp: "[形] 高価な", unit: "Unit 5" },
+      { en: "follower(s)", jp: "[名] 信奉者、支持者", unit: "Unit 5" },
+      { en: "thousand(s)", jp: "[名][形] 1,000(の)", unit: "Unit 5" }
     ];
 
-    const container = document.getElementById('wordbook-container');
-    let currentUnit = "";
-    let gridElement = null;
+    let currentIndex = 0;
+    let isShowingEnglish = false; // false = 日本語表示中, true = 英語表示中
 
-    wordData.forEach(data => {
-      // セクションが変わったらヘッダーを作成
-      if (data.unit !== currentUnit) {
-        currentUnit = data.unit;
-        const titleElement = document.createElement('h2');
-        titleElement.className = 'unit-title';
-        titleElement.textContent = currentUnit;
-        container.appendChild(titleElement);
+    const cardContent = document.getElementById('cardContent');
+    const cardLabel = document.getElementById('cardLabel');
+    const cardHint = document.getElementById('cardHint');
+    const progressInfo = document.getElementById('progressInfo');
 
-        gridElement = document.createElement('div');
-        gridElement.className = 'word-grid';
-        container.appendChild(gridElement);
+    function updateCard() {
+      const currentWord = words[currentIndex];
+      progressInfo.textContent = `${currentWord.unit} (${currentIndex + 1} / ${words.length})`;
+      
+      if (!isShowingEnglish) {
+        cardLabel.textContent = "日本語訳";
+        cardContent.textContent = currentWord.jp;
+        cardHint.textContent = "クリックして英語を表示";
+      } else {
+        cardLabel.textContent = "英語 (英単語)";
+        cardContent.textContent = currentWord.en;
+        cardHint.textContent = "クリックして次の単語へ";
       }
+    }
 
-      // カード要素を作成
-      const card = document.createElement('div');
-      card.className = 'word-card';
-      card.onclick = () => card.classList.toggle('show');
+    // カードをクリックした時の挙動
+    function handleCardClick() {
+      if (!isShowingEnglish) {
+        // 日本語から英語へ裏返す
+        isShowingEnglish = true;
+        updateCard();
+      } else {
+        // 英語の状態で押したら、次の単語の「日本語」に切り替える
+        isShowingEnglish = false;
+        currentIndex = (currentIndex + 1) % words.length; // 最後まで行ったら最初に戻る
+        updateCard();
+      }
+    }
 
-      card.innerHTML = `
-        <div>
-          <div class="word-header">
-            <span class="word-num">No. ${data.num}</span>
-          </div>
-          <div class="english">${data.en}</div>
-        </div>
-        <div class="japanese">${data.jp}</div>
-      `;
+    function nextCard() {
+      isShowingEnglish = false;
+      currentIndex = (currentIndex + 1) % words.length;
+      updateCard();
+    }
 
-      gridElement.appendChild(card);
-    });
+    function prevCard() {
+      isShowingEnglish = false;
+      currentIndex = (currentIndex - 1 + words.length) % words.length;
+      updateCard();
+    }
+
+    // 初期表示
+    updateCard();
   </script>
 </body>
 </html>
