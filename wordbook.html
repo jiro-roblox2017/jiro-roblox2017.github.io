@@ -36,7 +36,7 @@
       background-color: var(--bg-work);
     }
 
-    /* 固定ヘッダーグループ（ポモドーロ等と完全共通） */
+    /* 固定ヘッダーグループ（他ページと完全共通） */
     .header-group {
       position: sticky;
       top: 0;
@@ -103,7 +103,7 @@
       font-weight: 900;
     }
 
-    /* メインコンテンツ（画面中央にカードを配置） */
+    /* メインコンテンツ */
     .flashcard-section {
       flex: 1;
       display: flex;
@@ -111,6 +111,33 @@
       justify-content: center;
       align-items: center;
       padding: 20px;
+    }
+
+    /* 設定切り替えスイッチエリア */
+    .setting-panel {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .toggle-btn {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-sub);
+      border: 1px solid #262626;
+      padding: 0.5rem 1.2rem;
+      font-size: 0.85rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 600;
+    }
+
+    .toggle-btn.active {
+      background: var(--accent-orange);
+      color: #000000;
+      border-color: var(--accent-orange);
     }
 
     .progress-info {
@@ -123,8 +150,8 @@
     /* フラッシュカード本体 */
     .card {
       width: 100%;
-      max-width: 500px;
-      height: 300px;
+      max-width: 520px;
+      height: 320px;
       background-color: var(--card-bg);
       border: 2px solid #262626;
       border-radius: 16px;
@@ -161,7 +188,7 @@
       font-size: 2rem;
       font-weight: 700;
       line-height: 1.4;
-      word-break: break-all;
+      word-break: break-word;
     }
 
     .card-hint {
@@ -171,18 +198,18 @@
       color: var(--accent-orange);
     }
 
-    /* 操作ボタンエリア */
+    /* 前へ・次へ操作ボタン */
     .nav-controls {
       display: flex;
       gap: 12px;
       margin-top: 24px;
     }
 
-    button {
+    .nav-btn {
       background: var(--btn-bg);
       color: var(--text-main);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 0.6rem 1.6rem;
+      padding: 0.6rem 1.8rem;
       font-size: 0.95rem;
       border-radius: 30px;
       cursor: pointer;
@@ -190,7 +217,7 @@
       font-weight: 600;
     }
 
-    button:hover {
+    .nav-btn:hover {
       background: var(--btn-hover);
       border-color: var(--accent-orange);
     }
@@ -215,23 +242,31 @@
 
   <!-- フラッシュカードエリア -->
   <section class="flashcard-section">
+    
+    <!-- 設定・モード切り替えコントロール -->
+    <div class="setting-panel">
+      <button class="toggle-btn active" id="modeBtn" onclick="toggleMode()">モード: 日本語 ➔ 英語</button>
+      <button class="toggle-btn" id="orderBtn" onclick="toggleOrder()">順序: 教科書順</button>
+    </div>
+
     <div class="progress-info" id="progressInfo">Unit 4 & 5 (1 / 61)</div>
     
     <div class="card" id="flashcard" onclick="handleCardClick()">
       <div class="card-label" id="cardLabel">日本語訳</div>
       <div class="card-content" id="cardContent">読み込み中...</div>
-      <div class="card-hint">クリックして英語を表示</div>
+      <div class="card-hint" id="cardHint">クリックして答えを表示</div>
     </div>
 
     <div class="nav-controls">
-      <button onclick="prevCard()">前の単語</button>
-      <button onclick="nextCard()">次の単語</button>
+      <button class="nav-btn" onclick="prevCard()">前の単語</button>
+      <button class="nav-btn" onclick="nextCard()">次の単語</button>
     </div>
   </section>
 
   <script>
-    // 単語データ（Unit 4 & 5）
-    const words = [
+    // 教科書通りのオリジナル単語リスト（Unit 4 & 5）
+    const originalWords = [
+      // Unit 4
       { en: "prepared", jp: "[形] 用意ができている、備えた", unit: "Unit 4" },
       { en: "disaster", jp: "[名] 災害", unit: "Unit 4" },
       { en: "shelter", jp: "[名] 避難所", unit: "Unit 4" },
@@ -276,91 +311,7 @@
       { en: "bring ... together", jp: "…を団結させる", unit: "Unit 4" },
       { en: "keep on ...ing", jp: "…し続ける", unit: "Unit 4" },
       { en: "no longer", jp: "もはや…ない", unit: "Unit 4" },
+      // Unit 5
       { en: "internet", jp: "[名] インターネット", unit: "Unit 5" },
       { en: "person", jp: "[名] 人、個人", unit: "Unit 5" },
-      { en: "image", jp: "[名] 像、肖像、印象", unit: "Unit 5" },
-      { en: "print(ed)", jp: "[動] …を印刷する", unit: "Unit 5" },
-      { en: "leader", jp: "[名] 指導者、リーダー", unit: "Unit 5" },
-      { en: "greatly", jp: "[副] おおいに、非常に", unit: "Unit 5" },
-      { en: "born", jp: "[動] (be born) 生まれる", unit: "Unit 5" },
-      { en: "national", jp: "[形] 国の", unit: "Unit 5" },
-      { en: "non-violence", jp: "[名] 非暴力", unit: "Unit 5" },
-      { en: "independence", jp: "[名] 独立", unit: "Unit 5" },
-      { en: "violence", jp: "[名] 暴力", unit: "Unit 5" },
-      { en: "fight", jp: "[動] たたかう", unit: "Unit 5" },
-      { en: "protest", jp: "[動] 抗議する", unit: "Unit 5" },
-      { en: "tough", jp: "[形] 困難な、難しい", unit: "Unit 5" },
-      { en: "human rights", jp: "人権", unit: "Unit 5" },
-      { en: "lawyer", jp: "[名] 弁護士", unit: "Unit 5" },
-      { en: "British", jp: "[形] イギリスの / [名] イギリス人", unit: "Unit 5" },
-      { en: "discrimination", jp: "[名] 差別", unit: "Unit 5" },
-      { en: "freely", jp: "[副] 自由に", unit: "Unit 5" },
-      { en: "sidewalk", jp: "[名] 歩道", unit: "Unit 5" },
-      { en: "accept", jp: "[動] …を受け入れる", unit: "Unit 5" },
-      { en: "law", jp: "[名] 法律、法", unit: "Unit 5" },
-      { en: "unfair", jp: "[形] 不公平な", unit: "Unit 5" },
-      { en: "stood", jp: "[動] standの過去形", unit: "Unit 5" },
-      { en: "arrest(ed)", jp: "[動] …を逮捕する", unit: "Unit 5" },
-      { en: "jail(s)", jp: "[名] 刑務所", unit: "Unit 5" },
-      { en: "colony", jp: "[名] 植民地", unit: "Unit 5" },
-      { en: "produce", jp: "[動] …を生産する", unit: "Unit 5" },
-      { en: "tax", jp: "[名] 税、税金", unit: "Unit 5" },
-      { en: "expensive", jp: "[形] 高価な", unit: "Unit 5" },
-      { en: "follower(s)", jp: "[名] 信奉者、支持者", unit: "Unit 5" },
-      { en: "thousand(s)", jp: "[名][形] 1,000(の)", unit: "Unit 5" }
-    ];
-
-    let currentIndex = 0;
-    let isShowingEnglish = false; // false = 日本語表示中, true = 英語表示中
-
-    const cardContent = document.getElementById('cardContent');
-    const cardLabel = document.getElementById('cardLabel');
-    const cardHint = document.getElementById('cardHint');
-    const progressInfo = document.getElementById('progressInfo');
-
-    function updateCard() {
-      const currentWord = words[currentIndex];
-      progressInfo.textContent = `${currentWord.unit} (${currentIndex + 1} / ${words.length})`;
-      
-      if (!isShowingEnglish) {
-        cardLabel.textContent = "日本語訳";
-        cardContent.textContent = currentWord.jp;
-        cardHint.textContent = "クリックして英語を表示";
-      } else {
-        cardLabel.textContent = "英語 (英単語)";
-        cardContent.textContent = currentWord.en;
-        cardHint.textContent = "クリックして次の単語へ";
-      }
-    }
-
-    // カードをクリックした時の挙動
-    function handleCardClick() {
-      if (!isShowingEnglish) {
-        // 日本語から英語へ裏返す
-        isShowingEnglish = true;
-        updateCard();
-      } else {
-        // 英語の状態で押したら、次の単語の「日本語」に切り替える
-        isShowingEnglish = false;
-        currentIndex = (currentIndex + 1) % words.length; // 最後まで行ったら最初に戻る
-        updateCard();
-      }
-    }
-
-    function nextCard() {
-      isShowingEnglish = false;
-      currentIndex = (currentIndex + 1) % words.length;
-      updateCard();
-    }
-
-    function prevCard() {
-      isShowingEnglish = false;
-      currentIndex = (currentIndex - 1 + words.length) % words.length;
-      updateCard();
-    }
-
-    // 初期表示
-    updateCard();
-  </script>
-</body>
-</html>
+      { en: "image", jp: "
