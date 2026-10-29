@@ -295,7 +295,6 @@
       background-color: rgba(255, 255, 255, 0.12);
     }
 
-    /* 技術・家庭専用の分割入力レイアウト */
     .tech-home-wrapper {
       display: flex;
       flex-direction: column;
@@ -332,25 +331,43 @@
     .diff-minus { color: var(--accent-red); }
     .diff-zero { color: var(--text-sub); }
 
-    /* 操作ボタン */
+    /* データ引き継ぎ・操作エリア */
     .bottom-actions {
       display: flex;
-      justify-content: flex-end;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
       gap: 12px;
+      background-color: var(--card-bg);
+      padding: 16px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .sync-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
     .action-btn {
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text-sub);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
       border: 1px solid var(--border-color);
       padding: 8px 16px;
       font-size: 0.85rem;
       border-radius: 8px;
       cursor: pointer;
       transition: all 0.2s ease;
+      font-weight: 600;
     }
 
     .action-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: var(--accent-orange);
+    }
+
+    .action-btn.danger:hover {
       background: rgba(231, 76, 60, 0.2);
       color: var(--accent-red);
       border-color: var(--accent-red);
@@ -425,9 +442,13 @@
       </table>
     </div>
 
-    <!-- データ管理ボタン -->
+    <!-- データ管理・引き継ぎボタンエリア -->
     <div class="bottom-actions">
-      <button class="action-btn" onclick="clearData()">すべてのデータをリセット</button>
+      <div class="sync-group">
+        <button class="action-btn" onclick="exportDataCode()">📋 引き継ぎコードをコピー</button>
+        <button class="action-btn" onclick="importDataCode()">📥 ペーストしてインポート</button>
+      </div>
+      <button class="action-btn danger" onclick="clearData()">すべてのデータをリセット</button>
     </div>
   </main>
 
@@ -552,7 +573,6 @@
       let count9 = 0;
 
       subjects.forEach(sub => {
-        // 目標・自己採点・確定の小計表示を更新
         getSubjectScore(sub, 'target');
         const selfScore = getSubjectScore(sub, 'self');
         const finalScore = getSubjectScore(sub, 'final');
@@ -661,6 +681,47 @@
       }
     }
 
+    // --- 引き継ぎ機能（エクスポート & インポート） ---
+    
+    // エクスポート（コードをコピー）
+    function exportDataCode() {
+      saveData(); // 最新状態を保存
+      const rawData = localStorage.getItem('jirohub_test_scores');
+      if (!rawData) {
+        alert("エクスポートするデータがありません。");
+        return;
+      }
+
+      // クリップボードにコピー
+      navigator.clipboard.writeText(rawData).then(() => {
+        alert("📋 引き継ぎコードをコピーしました！\n別のブラウザを開いて「ペーストしてインポート」ボタンを押してください。");
+      }).catch(err => {
+        // コピーに失敗した場合はプロンプトで表示して手動コピー
+        prompt("お使いの環境では自動コピーできませんでした。以下のコードをコピーしてください：", rawData);
+      });
+    }
+
+    // インポート（コードをペースト）
+    function importDataCode() {
+      const inputCode = prompt("別のブラウザからコピーした「引き継ぎコード」をここにペースト（貼り付け）してください：");
+      if (!inputCode) return;
+
+      try {
+        // 正しいJSONデータか検証
+        const parsed = JSON.parse(inputCode);
+        if (!parsed.scores) {
+          throw new Error("無効なデータ形式です。");
+        }
+
+        // ローカルストレージに保存して反映
+        localStorage.setItem('jirohub_test_scores', inputCode);
+        loadData();
+        alert("✨ データのインポートに成功しました！");
+      } catch (e) {
+        alert("❌ コードが正しくないか、データが破損しています。もう一度確認してください。");
+      }
+    }
+
     function clearData() {
       if (confirm("入力したすべての点数をリセットしますか？")) {
         localStorage.removeItem('jirohub_test_scores');
@@ -681,7 +742,6 @@
       }
     }
 
-    // ページ更新・離脱時の最終強制保存
     window.addEventListener('beforeunload', () => {
       saveData();
     });
