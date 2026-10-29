@@ -11,7 +11,7 @@
 
   <style>
     :root {
-      --bg-work: #0F2350;          /* 勉強時：index共通の極黒ダーク背景 */
+      --bg-work: #0a0a0a;          /* 勉強時：極黒ダーク背景 */
       --bg-break: #3a1015;         /* 休憩時：落ち着いたダークワインレッド */
       --card-bg: #141414;
       --text-main: #ffffff;        /* 完全な白文字 */
@@ -54,7 +54,6 @@
       border-bottom: 1px solid #1f1f1f;
     }
 
-    /* 最上部サブバー（このサイトについて・免責事項） */
     .top-bar {
       display: flex;
       justify-content: flex-end;
@@ -76,7 +75,6 @@
       color: var(--text-main);
     }
 
-    /* メインヘッダー */
     header {
       height: 54px;
       padding: 0 24px;
@@ -101,7 +99,6 @@
       font-size: 1.4rem;
     }
 
-    /* HUB部分：オレンジ枠 ＋ 黒文字 */
     .logo-text span {
       background-color: var(--accent-orange);
       color: #000000;
@@ -114,14 +111,12 @@
       font-weight: 900;
     }
 
-    /* セクション1：タイマーエリア（ヘッダー全体の高さに合わせて調整） */
+    /* セクション1：タイマーエリア */
     .timer-section {
-      min-height: calc(100vh - 84px);
+      padding: 40px 20px 20px 20px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
-      padding: 20px;
     }
 
     .container {
@@ -129,18 +124,18 @@
     }
 
     .status {
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       letter-spacing: 0.15em;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
       color: var(--text-sub);
       font-weight: 600;
     }
 
     .timer {
-      font-size: 6.5rem;
+      font-size: 6rem;
       font-weight: 200;
       font-variant-numeric: tabular-nums;
-      margin-bottom: 2.5rem;
+      margin-bottom: 1.5rem;
       letter-spacing: 2px;
     }
 
@@ -148,14 +143,41 @@
       display: flex;
       gap: 1rem;
       justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    /* タイマー時間プリセット切替ボタンエリア */
+    .timer-preset-group {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .preset-btn {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-sub);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.4rem 1rem;
+      font-size: 0.85rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .preset-btn.active {
+      background: var(--accent-orange);
+      color: #000;
+      font-weight: bold;
+      border-color: var(--accent-orange);
     }
 
     button, .link-btn {
       background: var(--btn-bg);
       color: var(--text-main);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 0.75rem 2.2rem;
-      font-size: 1rem;
+      padding: 0.6rem 2rem;
+      font-size: 0.95rem;
       border-radius: 30px;
       cursor: pointer;
       backdrop-filter: blur(5px);
@@ -173,19 +195,16 @@
       transform: translateY(-2px);
     }
 
-    button:active, .link-btn:active {
-      transform: translateY(0);
-    }
-
     /* セクション2：下部の動画＆BGMコントロールエリア */
     .video-section {
-      padding: 60px 20px 80px 20px;
+      padding: 40px 20px 60px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 24px;
+      gap: 20px;
       background-color: var(--card-bg);
       border-top: 1px solid #1f1f1f;
+      margin-top: 20px;
     }
 
     .video-container {
@@ -203,6 +222,33 @@
       width: 100%;
       height: 100%;
       border: 0;
+    }
+
+    /* BGMクイックプリセットボタン */
+    .bgm-presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      max-width: 720px;
+      justify-content: center;
+    }
+
+    .bgm-chip {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-sub);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .bgm-chip:hover, .bgm-chip.active {
+      background: var(--accent-orange);
+      color: #000;
+      font-weight: bold;
+      border-color: var(--accent-orange);
     }
 
     /* プレイヤー直下の入力・操作パネル */
@@ -228,9 +274,9 @@
       background: var(--input-bg);
       border: 1px solid rgba(255, 255, 255, 0.2);
       color: var(--text-main);
-      padding: 0.75rem 1.2rem;
+      padding: 0.6rem 1.2rem;
       border-radius: 30px;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       outline: none;
       transition: border-color 0.2s ease;
     }
@@ -245,8 +291,8 @@
     }
 
     .bgm-controls button, .bgm-controls .link-btn {
-      font-size: 0.9rem;
-      padding: 0.75rem 1.5rem;
+      font-size: 0.85rem;
+      padding: 0.6rem 1.4rem;
       white-space: nowrap;
     }
   </style>
@@ -255,13 +301,11 @@
 
   <!-- 全ページ共通ヘッダーグループ -->
   <div class="header-group">
-    <!-- 上部サブバー -->
     <div class="top-bar">
-      <a href="about.html">このサイトについて</a>
+      <a href="about.html">this siteについて</a>
       <a href="disclaimer.html">免責事項</a>
     </div>
 
-    <!-- メインヘッダー -->
     <header>
       <a href="index.html" class="logo">
         <span class="logo-icon">▶</span>
@@ -279,6 +323,11 @@
         <button id="startBtn">開始</button>
         <button id="resetBtn">リセット</button>
       </div>
+      <!-- タイマー時間プリセット -->
+      <div class="timer-preset-group">
+        <button class="preset-btn active" id="preset25" onclick="setTimerPreset(25, 5)">25分 / 5分</button>
+        <button class="preset-btn" id="preset50" onclick="setTimerPreset(50, 10)">50分 / 10分</button>
+      </div>
     </div>
   </section>
 
@@ -295,6 +344,15 @@
       </iframe>
     </div>
 
+    <!-- BGMクイックプリセットボタン一覧 -->
+    <div class="bgm-presets">
+      <button class="bgm-chip active" onclick="loadBgm('Ljq0c5C7LuM', this)">🔥 Phonk Playlist</button>
+      <button class="bgm-chip" onclick="loadBgm('G6uI6fB4IE8', this)">🎵 フリーBGM (EDM)</button>
+      <button class="bgm-chip" onclick="loadBgm('h8UpC5JbMU0', this)">🌲 マイクラ (C418 BGM)</button>
+      <button class="bgm-chip" onclick="loadBgm('Zwo-15CkW24', this)">✨ フリーBGM2</button>
+      <button class="bgm-chip" onclick="loadBgm('mNLJMTRvyj8', this)">☕ ジャズ・イン・パリ</button>
+    </div>
+
     <!-- プレイヤー直下の操作エリア -->
     <div class="bgm-controls">
       <div class="bgm-input-group">
@@ -308,8 +366,12 @@
   </section>
 
   <script>
-    const WORK_TIME = 25 * 60; // 25分
-    const BREAK_TIME = 5 * 60;  // 5分
+    // タイマー設定値（デフォルトは 25分 / 5分）
+    let workMinutes = 25;
+    let breakMinutes = 5;
+
+    let WORK_TIME = workMinutes * 60;
+    let BREAK_TIME = breakMinutes * 60;
 
     let timeLeft = WORK_TIME;
     let timerId = null;
@@ -330,6 +392,21 @@
       const seconds = (timeLeft % 60).toString().padStart(2, '0');
       timerDisplay.textContent = `${minutes}:${seconds}`;
       document.title = `${minutes}:${seconds} - ${isWorkMode ? '勉強中' : '休憩中'}`;
+    }
+
+    // タイマー時間プリセット切替
+    function setTimerPreset(work, brk) {
+      pauseTimer();
+      workMinutes = work;
+      breakMinutes = brk;
+      WORK_TIME = workMinutes * 60;
+      BREAK_TIME = breakMinutes * 60;
+
+      // ボタンのアクティブ表示切替
+      document.getElementById('preset25').classList.toggle('active', work === 25);
+      document.getElementById('preset50').classList.toggle('active', work === 50);
+
+      resetTimer();
     }
 
     // タイマー開始
@@ -379,16 +456,16 @@
       updateDisplay();
     }
 
-    // URL解析（Googleリダイレクト・YouTube・その他対応）
+    // URL解析
     function parseVideoUrl(input) {
       if (!input) return null;
       let url = input.trim();
 
       try {
-        if (url.includes('google.com/') && (url.includes('q=') || url.includes('url='))) {
+        if (url.includes('google.com/')) {
           const tempUrl = url.startsWith('http') ? url : 'https://' + url;
           const parsedObj = new URL(tempUrl);
-          const targetUrl = parsedObj.searchParams.get('q') || parsedObj.searchParams.get('url');
+          const targetUrl = parsedObj.searchParams.get('url') || parsedObj.searchParams.get('q');
           if (targetUrl) {
             url = decodeURIComponent(targetUrl);
           }
@@ -408,7 +485,17 @@
       return { type: 'other', url: url };
     }
 
-    // 動画変更
+    // BGMチップ選択時
+    function loadBgm(videoId, element) {
+      bgmIframe.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1`;
+      ytExternalLink.href = `https://www.youtube.com/watch?v=${videoId}`;
+      
+      // アクティブボタンの切り替え
+      document.querySelectorAll('.bgm-chip').forEach(btn => btn.classList.remove('active'));
+      if (element) element.classList.add('active');
+    }
+
+    // 手動入力での動画変更
     function changeBgm() {
       const inputVal = ytUrlInput.value.trim();
       if (!inputVal) return;
@@ -419,6 +506,7 @@
         bgmIframe.src = `https://www.youtube.com/embed/${result.id}?enablejsapi=1`;
         ytExternalLink.href = `https://www.youtube.com/watch?v=${result.id}`;
         ytUrlInput.value = '';
+        document.querySelectorAll('.bgm-chip').forEach(btn => btn.classList.remove('active'));
       } else if (result.type === 'other') {
         bgmIframe.src = result.url;
         ytExternalLink.href = result.url;
