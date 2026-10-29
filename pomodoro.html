@@ -157,4 +157,379 @@
     }
 
     .preset-btn {
-      background: rgba(255, 25
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-sub);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.5rem 1.2rem;
+      font-size: 0.9rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .preset-btn.active {
+      background: var(--accent-orange);
+      color: #000;
+      font-weight: bold;
+      border-color: var(--accent-orange);
+    }
+
+    button, .link-btn {
+      background: var(--btn-bg);
+      color: var(--text-main);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0.7rem 2.2rem;
+      font-size: 1rem;
+      border-radius: 30px;
+      cursor: pointer;
+      backdrop-filter: blur(5px);
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    button:hover, .link-btn:hover {
+      background: var(--btn-hover);
+      border-color: var(--accent-orange);
+      transform: translateY(-2px);
+    }
+
+    /* セクション2：1080ピクセル下に配置する設定・動画エリア */
+    .video-section {
+      min-height: 1080px;
+      padding: 80px 20px 100px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      background-color: var(--card-bg);
+      border-top: 1px solid #1f1f1f;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      color: var(--text-sub);
+      letter-spacing: 0.1em;
+      margin-bottom: 10px;
+    }
+
+    .video-container {
+      width: 100%;
+      max-width: 720px;
+      aspect-ratio: 16 / 9;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+      background-color: #000;
+      border: 1px solid #1f1f1f;
+    }
+
+    .video-container iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    /* BGMクイックプリセットボタン */
+    .bgm-presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      max-width: 720px;
+      justify-content: center;
+    }
+
+    .bgm-chip {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-sub);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .bgm-chip:hover, .bgm-chip.active {
+      background: var(--accent-orange);
+      color: #000;
+      font-weight: bold;
+      border-color: var(--accent-orange);
+    }
+
+    /* プレイヤー直下の入力・操作パネル */
+    .bgm-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      width: 100%;
+      max-width: 720px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .bgm-input-group {
+      display: flex;
+      gap: 8px;
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .bgm-controls input {
+      flex: 1;
+      background: var(--input-bg);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--text-main);
+      padding: 0.7rem 1.2rem;
+      border-radius: 30px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .bgm-controls input::placeholder {
+      color: var(--text-sub);
+    }
+
+    .bgm-controls input:focus {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--accent-orange);
+    }
+
+    .bgm-controls button, .bgm-controls .link-btn {
+      font-size: 0.9rem;
+      padding: 0.7rem 1.5rem;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 全ページ共通ヘッダーグループ -->
+  <div class="header-group">
+    <div class="top-bar">
+      <a href="about.html">このサイトについて</a>
+      <a href="disclaimer.html">免責事項</a>
+    </div>
+
+    <header>
+      <a href="index.html" class="logo">
+        <span class="logo-icon">▶</span>
+        <span class="logo-text">JIRO<span>HUB</span></span>
+      </a>
+    </header>
+  </div>
+
+  <!-- タイマーエリア -->
+  <section class="timer-section">
+    <div class="container">
+      <div class="status" id="status">STUDY TIME</div>
+      <div class="timer" id="timer">25:00</div>
+      <div class="controls">
+        <button id="startBtn">開始</button>
+        <button id="resetBtn">リセット</button>
+      </div>
+      <!-- タイマー時間プリセット -->
+      <div class="timer-preset-group">
+        <button class="preset-btn active" id="preset25" onclick="setTimerPreset(25, 5)">25分 / 5分</button>
+        <button class="preset-btn" id="preset50" onclick="setTimerPreset(50, 10)">50分 / 10分</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 設定・動画・BGMエリア（1080px下に配置） -->
+  <section class="video-section">
+    <div class="section-title">▼ 音楽・BGM 設定エリア</div>
+    <div class="video-container">
+      <iframe 
+        id="bgmIframe"
+        src="https://www.youtube.com/embed/Ljq0c5C7LuM?enablejsapi=1" 
+        title="YouTube video player" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        referrerpolicy="strict-origin-when-cross-origin" 
+        allowfullscreen>
+      </iframe>
+    </div>
+
+    <!-- BGMクイックプリセットボタン一覧 -->
+    <div class="bgm-presets">
+      <button class="bgm-chip active" onclick="loadBgm('Ljq0c5C7LuM', this)">🔥 Phonk Playlist</button>
+      <button class="bgm-chip" onclick="loadBgm('G6uI6fB4IE8', this)">🎵 フリーBGM (EDM)</button>
+      <button class="bgm-chip" onclick="loadBgm('h8UpC5JbMU0', this)">🌲 マイクラ (C418 BGM)</button>
+      <button class="bgm-chip" onclick="loadBgm('Zwo-15CkW24', this)">✨ フリーBGM2</button>
+      <button class="bgm-chip" onclick="loadBgm('mNLJMTRvyj8', this)">☕ ジャズ・イン・パリ</button>
+    </div>
+
+    <!-- プレイヤー直下の操作エリア -->
+    <div class="bgm-controls">
+      <div class="bgm-input-group">
+        <input type="text" id="ytUrlInput" placeholder="YouTube、Googleリンク、URLやIDを入力">
+        <button id="changeBgmBtn">動画を変更</button>
+      </div>
+      <a id="ytExternalLink" href="https://www.youtube.com/watch?v=Ljq0c5C7LuM" target="_blank" class="link-btn">
+        動画で開く ↗
+      </a>
+    </div>
+  </section>
+
+  <script>
+    let workMinutes = 25;
+    let breakMinutes = 5;
+
+    let WORK_TIME = workMinutes * 60;
+    let BREAK_TIME = breakMinutes * 60;
+
+    let timeLeft = WORK_TIME;
+    let timerId = null;
+    let isWorkMode = true;
+
+    const timerDisplay = document.getElementById('timer');
+    const statusDisplay = document.getElementById('status');
+    const startBtn = document.getElementById('startBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const bgmIframe = document.getElementById('bgmIframe');
+    const ytUrlInput = document.getElementById('ytUrlInput');
+    const changeBgmBtn = document.getElementById('changeBgmBtn');
+    const ytExternalLink = document.getElementById('ytExternalLink');
+
+    function updateDisplay() {
+      const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+      const seconds = (timeLeft % 60).toString().padStart(2, '0');
+      timerDisplay.textContent = `${minutes}:${seconds}`;
+      document.title = `${minutes}:${seconds} - ${isWorkMode ? '勉強中' : '休憩中'}`;
+    }
+
+    function setTimerPreset(work, brk) {
+      pauseTimer();
+      workMinutes = work;
+      breakMinutes = brk;
+      WORK_TIME = workMinutes * 60;
+      BREAK_TIME = breakMinutes * 60;
+
+      document.getElementById('preset25').classList.toggle('active', work === 25);
+      document.getElementById('preset50').classList.toggle('active', work === 50);
+
+      resetTimer();
+    }
+
+    function startTimer() {
+      if (timerId !== null) return;
+      startBtn.textContent = '一時停止';
+      
+      timerId = setInterval(() => {
+        timeLeft--;
+        updateDisplay();
+
+        if (timeLeft <= 0) {
+          clearInterval(timerId);
+          timerId = null;
+          
+          isWorkMode = !isWorkMode;
+          if (isWorkMode) {
+            timeLeft = WORK_TIME;
+            statusDisplay.textContent = 'STUDY TIME';
+            document.body.classList.remove('break-mode');
+          } else {
+            timeLeft = BREAK_TIME;
+            statusDisplay.textContent = 'BREAK TIME';
+            document.body.classList.add('break-mode');
+          }
+          
+          updateDisplay();
+          startTimer();
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      clearInterval(timerId);
+      timerId = null;
+      startBtn.textContent = '開始';
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      isWorkMode = true;
+      timeLeft = WORK_TIME;
+      statusDisplay.textContent = 'STUDY TIME';
+      document.body.classList.remove('break-mode');
+      updateDisplay();
+    }
+
+    function parseVideoUrl(input) {
+      if (!input) return null;
+      let url = input.trim();
+
+      try {
+        if (url.includes('google.com/')) {
+          const tempUrl = url.startsWith('http') ? url : 'https://' + url;
+          const parsedObj = new URL(tempUrl);
+          const targetUrl = parsedObj.searchParams.get('url') || parsedObj.searchParams.get('q');
+          if (targetUrl) {
+            url = decodeURIComponent(targetUrl);
+          }
+        }
+      } catch (e) {}
+
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      if (match && match[2].length === 11) {
+        return { type: 'youtube', id: match[2] };
+      }
+
+      if (url.length === 11 && /^[a-zA-Z0-9_-]+$/.test(url)) {
+        return { type: 'youtube', id: url };
+      }
+
+      return { type: 'other', url: url };
+    }
+
+    function loadBgm(videoId, element) {
+      bgmIframe.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1`;
+      ytExternalLink.href = `https://www.youtube.com/watch?v=${videoId}`;
+      
+      document.querySelectorAll('.bgm-chip').forEach(btn => btn.classList.remove('active'));
+      if (element) element.classList.add('active');
+    }
+
+    function changeBgm() {
+      const inputVal = ytUrlInput.value.trim();
+      if (!inputVal) return;
+
+      const result = parseVideoUrl(inputVal);
+
+      if (result.type === 'youtube') {
+        bgmIframe.src = `https://www.youtube.com/embed/${result.id}?enablejsapi=1`;
+        ytExternalLink.href = `https://www.youtube.com/watch?v=${result.id}`;
+        ytUrlInput.value = '';
+        document.querySelectorAll('.bgm-chip').forEach(btn => btn.classList.remove('active'));
+      } else if (result.type === 'other') {
+        bgmIframe.src = result.url;
+        ytExternalLink.href = result.url;
+        ytUrlInput.value = '';
+      } else {
+        alert('正しいURLを入力してください。');
+      }
+    }
+
+    startBtn.addEventListener('click', () => {
+      if (timerId === null) {
+        startTimer();
+      } else {
+        pauseTimer();
+      }
+    });
+
+    resetBtn.addEventListener('click', resetTimer);
+    changeBgmBtn.addEventListener('click', changeBgm);
+    ytUrlInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') changeBgm();
+    });
+
+    updateDisplay();
+  </script>
+</body>
+</html>
