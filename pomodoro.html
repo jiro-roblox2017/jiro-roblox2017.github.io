@@ -23,11 +23,13 @@
       --accent-orange-hover: #ff8533;
     }
 
-    /* フルスクリーン時はスクロールバーを完全に隠す */
-    :fullscreen body,
-    :-webkit-full-screen body,
-    :-ms-fullscreen body {
-      overflow: hidden;
+    /* フルスクリーン時はスクロールバーを完全に隠す（全ブラウザ対応） */
+    html:fullscreen,
+    html:-webkit-full-screen,
+    body:fullscreen,
+    body:-webkit-full-screen {
+      overflow: hidden !important;
+      height: 100vh !important;
     }
 
     * {
@@ -117,9 +119,10 @@
       font-weight: 900;
     }
 
-    /* タイマー表示エリア */
+    /* タイマー表示エリア：画面の高さからヘッダー分を引いてぴったり収める */
     .timer-section {
-      height: 980px;
+      height: calc(100vh - 80px);
+      min-height: 500px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -143,7 +146,7 @@
       font-size: 8rem;
       font-weight: 200;
       font-variant-numeric: tabular-nums;
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
       letter-spacing: 2px;
     }
 
@@ -154,7 +157,6 @@
       margin-bottom: 16px;
     }
 
-    /* フルスクリーン切り替えボタン */
     .fs-btn {
       background: rgba(255, 255, 255, 0.05);
       color: var(--text-sub);
@@ -569,7 +571,6 @@
       updateDisplay();
     }
 
-    // フルスクリーン切り替え処理
     fsBtn.addEventListener('click', () => {
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen().catch(err => {
@@ -582,7 +583,6 @@
       }
     });
 
-    // フルスクリーン状態が変わったときにボタンの文字を変更
     document.addEventListener('fullscreenchange', () => {
       if (document.fullscreenElement) {
         fsBtn.textContent = '⛶ フルスクリーンを解除';
