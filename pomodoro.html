@@ -11,16 +11,23 @@
 
   <style>
     :root {
-      --bg-work: #0f2350;          /* 勉強時：#191970 (ミッドナイトブルー) */
-      --bg-break: #3d0c11;         /* 休憩時：#3d0c11 (ダークバーガンディ) */
+      /* デフォルトカラー（ネイビー & ワイン） */
+      --bg-work: #191970;          
+      --bg-break: #3d0c11;         
       --card-bg: #141414;
-      --text-main: #ffffff;        /* 完全な白文字 */
-      --text-sub: #a0a0a0;         /* 補足用グレー文字 */
+      --text-main: #ffffff;        
+      --text-sub: #a0a0a0;         
       --btn-bg: rgba(255, 255, 255, 0.1);
       --btn-hover: rgba(255, 255, 255, 0.2);
       --input-bg: rgba(255, 255, 255, 0.08);
-      --accent-orange: #ff6b00;    /* 鮮やかな差し色オレンジ */
+      --accent-orange: #ff6b00;    
       --accent-orange-hover: #ff8533;
+    }
+
+    /* 全画面（フルスクリーン）のときだけスクロールバーを消す */
+    :fullscreen body,
+    :-webkit-full-screen body {
+      overflow: hidden;
     }
 
     * {
@@ -44,7 +51,7 @@
       background-color: var(--bg-break);
     }
 
-    /* 固定ヘッダーグループ */
+    /* 固定ヘッダーグループ (高さ約80px) */
     .header-group {
       position: sticky;
       top: 0;
@@ -52,7 +59,7 @@
       background-color: rgba(10, 10, 10, 0.9);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid #1f1f1f;
-      height: 80px; /* 高さ確定 */
+      height: 80px;
     }
 
     .top-bar {
@@ -112,9 +119,9 @@
       font-weight: 900;
     }
 
-    /* セクション1：タイマーエリア（ヘッダーと併せて1080px以下に収まる高さ設定） */
+    /* セクション1：タイマー表示エリア (高さ980px/合計1060pxで1080pxに収まる) */
     .timer-section {
-      height: 980px; /* 80px(ヘッダー) + 980px = 合計1060px (1080px以下に完全収束) */
+      height: 980px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -171,53 +178,55 @@
       transform: translateY(-2px);
     }
 
-    /* セクション2：1080px下に配置する設定・動画・BGMエリア */
+    /* セクション2：1080px下に配置する設定・動画エリア */
     .video-section {
       min-height: 1080px;
-      padding: 60px 20px 100px 20px;
+      padding: 60px 20px;
+      background-color: var(--card-bg);
+      border-top: 1px solid #1f1f1f;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 24px;
-      background-color: var(--card-bg);
-      border-top: 1px solid #1f1f1f;
     }
 
     .section-title {
       font-size: 1.1rem;
       color: var(--text-sub);
       letter-spacing: 0.1em;
+      margin-bottom: 24px;
     }
 
-    /* 移動したタイマー時間プリセットボタンエリア */
-    .timer-preset-group {
+    /* 左右分割レイアウト（左：動画 / 右：各種設定） */
+    .split-container {
       display: flex;
-      gap: 12px;
+      flex-wrap: wrap;
+      gap: 30px;
+      width: 100%;
+      max-width: 1100px;
       justify-content: center;
-      margin-bottom: 8px;
     }
 
-    .preset-btn {
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text-sub);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 0.6rem 1.4rem;
-      font-size: 0.9rem;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: all 0.2s ease;
+    .left-panel {
+      flex: 1 1 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
-    .preset-btn.active {
-      background: var(--accent-orange);
-      color: #000;
-      font-weight: bold;
-      border-color: var(--accent-orange);
+    .right-panel {
+      flex: 1 1 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid #262626;
+      padding: 24px;
+      border-radius: 16px;
     }
 
+    /* 左側：iframe 動画プレイヤー */
     .video-container {
       width: 100%;
-      max-width: 720px;
       aspect-ratio: 16 / 9;
       border-radius: 12px;
       overflow: hidden;
@@ -232,21 +241,90 @@
       border: 0;
     }
 
-    /* BGMクイックプリセットボタン */
+    /* 右側：各設定枠 */
+    .setting-box {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .box-label {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      font-weight: 600;
+    }
+
+    /* タイマー時間切替ボタン */
+    .timer-preset-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .preset-btn {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-sub);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.6rem;
+      font-size: 0.85rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .preset-btn.active {
+      background: var(--accent-orange);
+      color: #000;
+      font-weight: bold;
+      border-color: var(--accent-orange);
+    }
+
+    /* カラーテーマ切り替えチップ */
+    .color-presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .color-chip {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .color-chip.active {
+      border-color: var(--accent-orange);
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .color-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    /* BGMボタン */
     .bgm-presets {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      max-width: 720px;
-      justify-content: center;
+      gap: 8px;
     }
 
     .bgm-chip {
       background: rgba(255, 255, 255, 0.05);
       color: var(--text-sub);
       border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 8px 16px;
-      font-size: 0.85rem;
+      padding: 6px 12px;
+      font-size: 0.8rem;
       border-radius: 20px;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -259,63 +337,32 @@
       border-color: var(--accent-orange);
     }
 
-    /* プレイヤー直下の入力・操作パネル */
-    .bgm-controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      width: 100%;
-      max-width: 720px;
-      justify-content: center;
-      align-items: center;
-    }
-
+    /* URL入力フォーム */
     .bgm-input-group {
       display: flex;
       gap: 8px;
-      flex: 1;
-      min-width: 280px;
     }
 
-    .bgm-controls input {
+    .bgm-input-group input {
       flex: 1;
       background: var(--input-bg);
       border: 1px solid rgba(255, 255, 255, 0.2);
       color: var(--text-main);
-      padding: 0.7rem 1.2rem;
-      border-radius: 30px;
-      font-size: 0.95rem;
+      padding: 0.6rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
       outline: none;
-      transition: border-color 0.2s ease;
     }
 
-    .bgm-controls input::placeholder {
-      color: var(--text-sub);
-    }
-
-    .bgm-controls input:focus {
-      background: rgba(255, 255, 255, 0.12);
-      border-color: var(--accent-orange);
-    }
-
-    .bgm-controls button, .bgm-controls .link-btn {
-      font-size: 0.9rem;
-      padding: 0.7rem 1.5rem;
-      white-space: nowrap;
+    .bgm-input-group button {
+      padding: 0.6rem 1.2rem;
+      font-size: 0.85rem;
     }
   </style>
- <style>
-    /* 全画面のときだけスクロールバーを消す */
-    :fullscreen body,
-    :-webkit-full-screen body {
-      overflow: hidden;
-    }
- </style>
-
 </head>
 <body>
 
-  <!-- 全ページ共通ヘッダーグループ (高さ: 約80px) -->
+  <!-- ヘッダーグループ -->
   <div class="header-group">
     <div class="top-bar">
       <a href="about.html">このサイトについて</a>
@@ -330,7 +377,7 @@
     </header>
   </div>
 
-  <!-- タイマーエリア (高さ: 980px ➔ 合計1060pxで1080px以下に収まる) -->
+  <!-- タイマーエリア -->
   <section class="timer-section">
     <div class="container">
       <div class="status" id="status">STUDY TIME</div>
@@ -342,45 +389,79 @@
     </div>
   </section>
 
-  <!-- 設定・動画・BGMエリア（タイマー下部に配置） -->
+  <!-- 設定・動画・BGMエリア（タイマー1080px下） -->
   <section class="video-section">
-    <div class="section-title">▼ タイマー時間 & BGM 設定エリア</div>
+    <div class="section-title">▼ プレイヤー ＆ タイマー設定</div>
 
-    <!-- 移設されたタイマー時間プリセット (iframeのすぐ上) -->
-    <div class="timer-preset-group">
-      <button class="preset-btn active" id="preset25" onclick="setTimerPreset(25, 5)">25分 / 5分 モード</button>
-      <button class="preset-btn" id="preset50" onclick="setTimerPreset(50, 10)">50分 / 10分 モード</button>
-    </div>
-
-    <div class="video-container">
-      <iframe 
-        id="bgmIframe"
-        src="https://www.youtube.com/embed/Ljq0c5C7LuM?enablejsapi=1" 
-        title="YouTube video player" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-        referrerpolicy="strict-origin-when-cross-origin" 
-        allowfullscreen>
-      </iframe>
-    </div>
-
-    <!-- BGMクイックプリセットボタン一覧 -->
-    <div class="bgm-presets">
-      <button class="bgm-chip active" onclick="loadBgm('Ljq0c5C7LuM', this)">🔥 Phonk Playlist</button>
-      <button class="bgm-chip" onclick="loadBgm('G6uI6fB4IE8', this)">🎵 フリーBGM (EDM)</button>
-      <button class="bgm-chip" onclick="loadBgm('h8UpC5JbMU0', this)">🌲 マイクラ (C418 BGM)</button>
-      <button class="bgm-chip" onclick="loadBgm('Zwo-15CkW24', this)">✨ フリーBGM2</button>
-      <button class="bgm-chip" onclick="loadBgm('mNLJMTRvyj8', this)">☕ ジャズ・イン・パリ</button>
-    </div>
-
-    <!-- プレイヤー直下の操作エリア -->
-    <div class="bgm-controls">
-      <div class="bgm-input-group">
-        <input type="text" id="ytUrlInput" placeholder="YouTube、Googleリンク、URLやIDを入力">
-        <button id="changeBgmBtn">動画を変更</button>
+    <div class="split-container">
+      <!-- 左側：動画 iframe ＆ 外部リンク -->
+      <div class="left-panel">
+        <div class="video-container">
+          <iframe 
+            id="bgmIframe"
+            src="https://www.youtube.com/embed/Ljq0c5C7LuM?enablejsapi=1" 
+            title="YouTube video player" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            referrerpolicy="strict-origin-when-cross-origin" 
+            allowfullscreen>
+          </iframe>
+        </div>
+        <a id="ytExternalLink" href="https://www.youtube.com/watch?v=Ljq0c5C7LuM" target="_blank" class="link-btn" style="width: 100%;">
+          YouTubeで開く ↗
+        </a>
       </div>
-      <a id="ytExternalLink" href="https://www.youtube.com/watch?v=Ljq0c5C7LuM" target="_blank" class="link-btn">
-        動画で開く ↗
-      </a>
+
+      <!-- 右側：各種設定枠 -->
+      <div class="right-panel">
+        <!-- 1. 時間プリセット -->
+        <div class="setting-box">
+          <div class="box-label">⏱️ タイマー時間設定</div>
+          <div class="timer-preset-group">
+            <button class="preset-btn active" id="preset25" onclick="setTimerPreset(25, 5)">25分 / 5分</button>
+            <button class="preset-btn" id="preset50" onclick="setTimerPreset(50, 10)">50分 / 10分</button>
+          </div>
+        </div>
+
+        <!-- 2. カラーテーマプリセット -->
+        <div class="setting-box">
+          <div class="box-label">🎨 カラーテーマ（勉強 / 休憩）</div>
+          <div class="color-presets">
+            <button class="color-chip active" onclick="setColorTheme('#191970', '#3d0c11', this)">
+              <span class="color-dot" style="background:#191970;"></span>ネイビー/ワイン
+            </button>
+            <button class="color-chip" onclick="setColorTheme('#4a1525', '#1a0008', this)">
+              <span class="color-dot" style="background:#ff69b4;"></span>ピンクダーク
+            </button>
+            <button class="color-chip" onclick="setColorTheme('#0a0a0a', '#1a1a1a', this)">
+              <span class="color-dot" style="background:#ffffff;"></span>フルブラック
+            </button>
+            <button class="color-chip" onclick="setColorTheme('#0b2b18', '#1c0b2b', this)">
+              <span class="color-dot" style="background:#2ecc71;"></span>サイバーグリーン
+            </button>
+          </div>
+        </div>
+
+        <!-- 3. BGMプレイリスト -->
+        <div class="setting-box">
+          <div class="box-label">🎵 BGM プレイリスト</div>
+          <div class="bgm-presets">
+            <button class="bgm-chip active" onclick="loadBgm('Ljq0c5C7LuM', this)">🔥 Phonk</button>
+            <button class="bgm-chip" onclick="loadBgm('G6uI6fB4IE8', this)">🎵 フリーBGM</button>
+            <button class="bgm-chip" onclick="loadBgm('h8UpC5JbMU0', this)">🌲 マイクラ</button>
+            <button class="bgm-chip" onclick="loadBgm('Zwo-15CkW24', this)">✨ フリーBGM2</button>
+            <button class="bgm-chip" onclick="loadBgm('mNLJMTRvyj8', this)">☕ ジャズ</button>
+          </div>
+        </div>
+
+        <!-- 4. カスタムURL入力 -->
+        <div class="setting-box">
+          <div class="box-label">🔗 動画URLを入力</div>
+          <div class="bgm-input-group">
+            <input type="text" id="ytUrlInput" placeholder="YouTube URLまたはIDを入力">
+            <button id="changeBgmBtn">変更</button>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -422,6 +503,15 @@
       document.getElementById('preset50').classList.toggle('active', work === 50);
 
       resetTimer();
+    }
+
+    // カラーテーマ切り替え機能
+    function setColorTheme(workBg, breakBg, btnElement) {
+      document.documentElement.style.setProperty('--bg-work', workBg);
+      document.documentElement.style.setProperty('--bg-break', breakBg);
+
+      document.querySelectorAll('.color-chip').forEach(btn => btn.classList.remove('active'));
+      if (btnElement) btnElement.classList.add('active');
     }
 
     function startTimer() {
