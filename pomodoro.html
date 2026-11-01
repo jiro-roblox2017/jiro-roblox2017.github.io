@@ -11,7 +11,6 @@
 
   <style>
     :root {
-      /* デフォルトカラー（ネイビー & ワイン） */
       --bg-work: #191970;          
       --bg-break: #3d0c11;         
       --card-bg: #141414;
@@ -24,9 +23,10 @@
       --accent-orange-hover: #ff8533;
     }
 
-    /* 全画面（フルスクリーン）のときだけスクロールバーを消す */
+    /* フルスクリーン時はスクロールバーを完全に隠す */
     :fullscreen body,
-    :-webkit-full-screen body {
+    :-webkit-full-screen body,
+    :-ms-fullscreen body {
       overflow: hidden;
     }
 
@@ -46,12 +46,10 @@
       transition: background-color 0.8s ease;
     }
 
-    /* 休憩モード時の背景 */
     body.break-mode {
       background-color: var(--bg-break);
     }
 
-    /* 固定ヘッダーグループ (高さ約80px) */
     .header-group {
       position: sticky;
       top: 0;
@@ -119,7 +117,7 @@
       font-weight: 900;
     }
 
-    /* セクション1：タイマー表示エリア (高さ980px/合計1060pxで1080pxに収まる) */
+    /* タイマー表示エリア */
     .timer-section {
       height: 980px;
       display: flex;
@@ -145,7 +143,7 @@
       font-size: 8rem;
       font-weight: 200;
       font-variant-numeric: tabular-nums;
-      margin-bottom: 2.5rem;
+      margin-bottom: 2rem;
       letter-spacing: 2px;
     }
 
@@ -153,6 +151,24 @@
       display: flex;
       gap: 1.2rem;
       justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    /* フルスクリーン切り替えボタン */
+    .fs-btn {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-sub);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.4rem 1.2rem;
+      font-size: 0.85rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .fs-btn:hover {
+      color: var(--text-main);
+      border-color: var(--accent-orange);
     }
 
     button, .link-btn {
@@ -178,10 +194,10 @@
       transform: translateY(-2px);
     }
 
-    /* セクション2：1080px下に配置する設定・動画エリア */
+    /* 設定・動画エリア（1080px下） */
     .video-section {
       min-height: 1080px;
-      padding: 60px 20px;
+      padding: 60px 20px 100px 20px;
       background-color: var(--card-bg);
       border-top: 1px solid #1f1f1f;
       display: flex;
@@ -196,7 +212,6 @@
       margin-bottom: 24px;
     }
 
-    /* 左右分割レイアウト（左：動画 / 右：各種設定） */
     .split-container {
       display: flex;
       flex-wrap: wrap;
@@ -224,7 +239,6 @@
       border-radius: 16px;
     }
 
-    /* 左側：iframe 動画プレイヤー */
     .video-container {
       width: 100%;
       aspect-ratio: 16 / 9;
@@ -241,7 +255,6 @@
       border: 0;
     }
 
-    /* 右側：各設定枠 */
     .setting-box {
       display: flex;
       flex-direction: column;
@@ -254,7 +267,6 @@
       font-weight: 600;
     }
 
-    /* タイマー時間切替ボタン */
     .timer-preset-group {
       display: flex;
       gap: 8px;
@@ -280,7 +292,6 @@
       border-color: var(--accent-orange);
     }
 
-    /* カラーテーマ切り替えチップ */
     .color-presets {
       display: flex;
       flex-wrap: wrap;
@@ -312,7 +323,6 @@
       border-radius: 50%;
     }
 
-    /* BGMボタン */
     .bgm-presets {
       display: flex;
       flex-wrap: wrap;
@@ -337,7 +347,6 @@
       border-color: var(--accent-orange);
     }
 
-    /* URL入力フォーム */
     .bgm-input-group {
       display: flex;
       gap: 8px;
@@ -386,10 +395,12 @@
         <button id="startBtn">開始</button>
         <button id="resetBtn">リセット</button>
       </div>
+      <!-- フルスクリーン切り替えボタン -->
+      <button class="fs-btn" id="fsBtn">⛶ フルスクリーンにする</button>
     </div>
   </section>
 
-  <!-- 設定・動画・BGMエリア（タイマー1080px下） -->
+  <!-- 設定・動画・BGMエリア -->
   <section class="video-section">
     <div class="section-title">▼ プレイヤー ＆ タイマー設定</div>
 
@@ -480,6 +491,7 @@
     const statusDisplay = document.getElementById('status');
     const startBtn = document.getElementById('startBtn');
     const resetBtn = document.getElementById('resetBtn');
+    const fsBtn = document.getElementById('fsBtn');
     const bgmIframe = document.getElementById('bgmIframe');
     const ytUrlInput = document.getElementById('ytUrlInput');
     const changeBgmBtn = document.getElementById('changeBgmBtn');
@@ -505,7 +517,6 @@
       resetTimer();
     }
 
-    // カラーテーマ切り替え機能
     function setColorTheme(workBg, breakBg, btnElement) {
       document.documentElement.style.setProperty('--bg-work', workBg);
       document.documentElement.style.setProperty('--bg-break', breakBg);
@@ -557,6 +568,28 @@
       document.body.classList.remove('break-mode');
       updateDisplay();
     }
+
+    // フルスクリーン切り替え処理
+    fsBtn.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          alert(`フルスクリーンに失敗しました: ${err.message}`);
+        });
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    });
+
+    // フルスクリーン状態が変わったときにボタンの文字を変更
+    document.addEventListener('fullscreenchange', () => {
+      if (document.fullscreenElement) {
+        fsBtn.textContent = '⛶ フルスクリーンを解除';
+      } else {
+        fsBtn.textContent = '⛶ フルスクリーンにする';
+      }
+    });
 
     function parseVideoUrl(input) {
       if (!input) return null;
