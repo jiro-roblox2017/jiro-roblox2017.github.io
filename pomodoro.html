@@ -304,6 +304,14 @@
       white-space: nowrap;
     }
   </style>
+ <style>
+    /* 全画面のときだけスクロールバーを消す */
+    :fullscreen body,
+    :-webkit-full-screen body {
+      overflow: hidden;
+    }
+ </style>
+
 </head>
 <body>
 
