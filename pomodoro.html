@@ -23,7 +23,7 @@
       --accent-orange-hover: #ff8533;
     }
 
-    /* フルスクリーン時はスクロールバーを完全に隠す（全ブラウザ対応） */
+    /* フルスクリーン時のスクロール非表示設定 */
     html:fullscreen,
     html:-webkit-full-screen,
     body:fullscreen,
@@ -119,7 +119,7 @@
       font-weight: 900;
     }
 
-    /* タイマー表示エリア：画面の高さからヘッダー分を引いてぴったり収める */
+    /* タイマー表示エリア */
     .timer-section {
       height: calc(100vh - 80px);
       min-height: 500px;
@@ -196,7 +196,7 @@
       transform: translateY(-2px);
     }
 
-    /* 設定・動画エリア（1080px下） */
+    /* 設定・動画エリア */
     .video-section {
       min-height: 1080px;
       padding: 60px 20px 100px 20px;
@@ -407,7 +407,6 @@
     <div class="section-title">▼ プレイヤー ＆ タイマー設定</div>
 
     <div class="split-container">
-      <!-- 左側：動画 iframe ＆ 外部リンク -->
       <div class="left-panel">
         <div class="video-container">
           <iframe 
@@ -424,9 +423,7 @@
         </a>
       </div>
 
-      <!-- 右側：各種設定枠 -->
       <div class="right-panel">
-        <!-- 1. 時間プリセット -->
         <div class="setting-box">
           <div class="box-label">⏱️ タイマー時間設定</div>
           <div class="timer-preset-group">
@@ -435,7 +432,6 @@
           </div>
         </div>
 
-        <!-- 2. カラーテーマプリセット -->
         <div class="setting-box">
           <div class="box-label">🎨 カラーテーマ（勉強 / 休憩）</div>
           <div class="color-presets">
@@ -454,7 +450,6 @@
           </div>
         </div>
 
-        <!-- 3. BGMプレイリスト -->
         <div class="setting-box">
           <div class="box-label">🎵 BGM プレイリスト</div>
           <div class="bgm-presets">
@@ -466,7 +461,6 @@
           </div>
         </div>
 
-        <!-- 4. カスタムURL入力 -->
         <div class="setting-box">
           <div class="box-label">🔗 動画URLを入力</div>
           <div class="bgm-input-group">
@@ -571,8 +565,10 @@
       updateDisplay();
     }
 
+    // ★ 修正：全画面切り替え時にスクロール位置を最上部に自動リセット
     fsBtn.addEventListener('click', () => {
       if (!document.fullscreenElement) {
+        window.scrollTo({ top: 0, behavior: 'instant' }); // 画面最上部へ戻す
         document.documentElement.requestFullscreen().catch(err => {
           alert(`フルスクリーンに失敗しました: ${err.message}`);
         });
@@ -585,6 +581,7 @@
 
     document.addEventListener('fullscreenchange', () => {
       if (document.fullscreenElement) {
+        window.scrollTo({ top: 0, behavior: 'instant' }); // 念のため全画面化完了時も最上部に固定
         fsBtn.textContent = '⛶ フルスクリーンを解除';
       } else {
         fsBtn.textContent = '⛶ フルスクリーンにする';
