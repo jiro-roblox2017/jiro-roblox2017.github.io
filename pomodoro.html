@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jiro hub - ポモドーロタイマー</title>
+  <title>JIRO HUB - ポモドーロタイマー</title>
   
   <link rel="icon" href="icon.jpg" type="image/jpeg">
   <link rel="icon" href="favicon.png" type="image/png">
@@ -60,7 +60,6 @@
       height: 80px;
     }
 
-    /* 最上部サブバー */
     .top-bar {
       display: flex;
       justify-content: flex-end;
@@ -88,7 +87,6 @@
       color: var(--accent-orange);
     }
 
-    /* QRコード ポップアップモーダル */
     .qr-modal {
       display: none;
       position: fixed;
@@ -441,9 +439,8 @@
 <body>
 
   <div class="header-group">
-    <!-- 最上部サブバー（ここにQRボタンを追加） -->
     <div class="top-bar">
-      <button class="qr-trigger-btn" onclick="openQrModal()">📱 QRコードでシェア</button>
+      <button class="qr-trigger-btn" onclick="openQrModal()">📱 QRコード</button>
       <a href="about.html">このサイトについて</a>
       <a href="disclaimer.html">免責事項</a>
     </div>
@@ -456,10 +453,9 @@
     </header>
   </div>
 
-  <!-- QRコード表示用ポップアップモーダル -->
   <div class="qr-modal" id="qrModal" onclick="closeQrModalOnBg(event)">
     <div class="qr-modal-content">
-      <img src="QR.png" alt="シェア用QRコード"[cite: 1]>
+      <img src="QR.png" alt="シェア用QRコード">[cite: 1]
       <button class="qr-close-btn" onclick="closeQrModal()">閉じる</button>
     </div>
   </div>
@@ -566,7 +562,14 @@
     const changeBgmBtn = document.getElementById('changeBgmBtn');
     const ytExternalLink = document.getElementById('ytExternalLink');
 
-    // QRコードモーダル制御関数
+    // ★ 誤リロード・離脱防止機能（タイマー作動中のみ作動）
+    window.addEventListener('beforeunload', (e) => {
+      if (timerId !== null) {
+        e.preventDefault();
+        e.returnValue = ''; // ブラウザ標準の確認ダイアログを表示
+      }
+    });
+
     function openQrModal() {
       document.getElementById('qrModal').classList.add('active');
     }
