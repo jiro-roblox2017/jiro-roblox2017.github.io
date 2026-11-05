@@ -50,6 +50,164 @@
       background-color: var(--bg-break);
     }
 
+    /* --- 年齢確認モーダル --- */
+    .age-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .age-modal.active {
+      display: flex;
+    }
+
+    .age-modal-content {
+      background-color: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 32px 24px;
+      border-radius: 16px;
+      text-align: center;
+      max-width: 380px;
+      width: 90%;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9);
+    }
+
+    .age-modal-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 12px;
+      color: var(--text-main);
+    }
+
+    .age-modal-desc {
+      font-size: 0.9rem;
+      color: var(--text-sub);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .age-btn-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .age-btn {
+      flex: 1;
+      padding: 10px 16px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+
+    .age-btn.yes {
+      background-color: var(--accent-orange);
+      color: #000000;
+    }
+
+    .age-btn.no {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: var(--text-sub);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .age-btn:hover {
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
+
+    /* --- コマンドモード モーダル --- */
+    .cmd-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 2500;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .cmd-modal.active {
+      display: flex;
+    }
+
+    .cmd-content {
+      background-color: var(--card-bg);
+      border: 1px solid var(--accent-orange);
+      padding: 24px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 480px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9);
+    }
+
+    .cmd-header {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--accent-orange);
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cmd-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 360px;
+      overflow-y: auto;
+      margin-bottom: 16px;
+      padding-right: 4px;
+    }
+
+    .cmd-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .cmd-item span.num {
+      background: var(--accent-orange);
+      color: #000;
+      font-weight: bold;
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 0.8rem;
+    }
+
+    .cmd-footer {
+      font-size: 0.75rem;
+      color: var(--text-sub);
+      text-align: center;
+    }
+
+    /* --- ヘッダー・ナビゲーション --- */
     .header-group {
       position: sticky;
       top: 0;
@@ -87,6 +245,7 @@
       color: var(--accent-orange);
     }
 
+    /* --- QRコード モーダル --- */
     .qr-modal {
       display: none;
       position: fixed;
@@ -438,6 +597,41 @@
 </head>
 <body>
 
+  <!-- 初回アクセス用 年齢確認モーダル -->
+  <div class="age-modal" id="ageModal">
+    <div class="age-modal-content">
+      <div class="age-modal-title">年齢確認</div>
+      <div class="age-modal-desc">あなたは 18 歳以上ですか？</div>
+      <div class="age-btn-group">
+        <button class="age-btn yes" onclick="verifyAge(true)">はい (Y)</button>
+        <button class="age-btn no" onclick="verifyAge(false)">いいえ (N)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- コマンドモード モーダル (67入力で起動) -->
+  <div class="cmd-modal" id="cmdModal">
+    <div class="cmd-content">
+      <div class="cmd-header">
+        <span>⚡ COMMAND MODE (67)</span>
+        <span style="font-size: 0.8rem; color: var(--text-sub);">[Esc] で閉じる</span>
+      </div>
+      <div class="cmd-list">
+        <div class="cmd-item"><span class="num">1</span> <span>① 休憩から始める (25分 / 5分休憩)</span></div>
+        <div class="cmd-item"><span class="num">2</span> <span>② 休憩から始める (50分 / 10分休憩)</span></div>
+        <div class="cmd-item"><span class="num">3</span> <span>③ 通常スタート (25分 / 5分)</span></div>
+        <div class="cmd-item"><span class="num">4</span> <span>④ 長め集中 (50分 / 10分)</span></div>
+        <div class="cmd-item"><span class="num">5</span> <span>⑤ 集中 +10分追加</span></div>
+        <div class="cmd-item"><span class="num">6</span> <span>⑥ 集中 +25分追加</span></div>
+        <div class="cmd-item"><span class="num">7</span> <span>⑦ テーマ: ネイビー/ワイン</span></div>
+        <div class="cmd-item"><span class="num">8</span> <span>⑧ テーマ: ピンクダーク</span></div>
+        <div class="cmd-item"><span class="num">9</span> <span>⑨ テーマ: フルブラック</span></div>
+        <div class="cmd-item"><span class="num">0</span> <span>⑩ テーマ: サイバーグリーン</span></div>
+      </div>
+      <div class="cmd-footer">キーボードの [1]〜[0] を押してコマンドを選択してください</div>
+    </div>
+  </div>
+
   <div class="header-group">
     <div class="top-bar">
       <button class="qr-trigger-btn" onclick="openQrModal()">📱 QRコード</button>
@@ -453,6 +647,7 @@
     </header>
   </div>
 
+  <!-- QRコード モーダル -->
   <div class="qr-modal" id="qrModal" onclick="closeQrModalOnBg(event)">
     <div class="qr-modal-content">
       <img src="QR.png" alt="シェア用QRコード">[cite: 1]
@@ -542,6 +737,25 @@
   </section>
 
   <script>
+    // --- 初回アクセス時 年齢確認機能（localStorage対応） ---
+    function checkAgeVerification() {
+      const isVerified = localStorage.getItem('age_verified');
+      if (isVerified !== 'true') {
+        document.getElementById('ageModal').classList.add('active');
+      }
+    }
+
+    function verifyAge(isOver18) {
+      if (isOver18) {
+        localStorage.setItem('age_verified', 'true');
+        document.getElementById('ageModal').classList.remove('active');
+      } else {
+        localStorage.setItem('age_verified', 'false');
+        alert("18歳未満の方はご利用いただけません。");
+        window.location.href = "https://www.google.com";
+      }
+    }
+
     let workMinutes = 25;
     let breakMinutes = 5;
 
@@ -562,11 +776,98 @@
     const changeBgmBtn = document.getElementById('changeBgmBtn');
     const ytExternalLink = document.getElementById('ytExternalLink');
 
-    // ★ 誤リロード・離脱防止機能（タイマー作動中のみ作動）
+    // --- コマンドモード機能 (67入力で起動) ---
+    let keyBuffer = '';
+    const cmdModal = document.getElementById('cmdModal');
+
+    window.addEventListener('keydown', (e) => {
+      if (document.activeElement.tagName === 'INPUT') return;
+
+      if (e.key === 'Escape') {
+        cmdModal.classList.remove('active');
+        keyBuffer = '';
+        return;
+      }
+
+      if (cmdModal.classList.contains('active')) {
+        if (e.key >= '1' && e.key <= '9') {
+          executeCommand(parseInt(e.key));
+          cmdModal.classList.remove('active');
+          e.preventDefault();
+        } else if (e.key === '0') {
+          executeCommand(10);
+          cmdModal.classList.remove('active');
+          e.preventDefault();
+        }
+        return;
+      }
+
+      if (e.key >= '0' && e.key <= '9') {
+        keyBuffer += e.key;
+        if (keyBuffer.length > 2) {
+          keyBuffer = keyBuffer.slice(-2);
+        }
+        if (keyBuffer === '67') {
+          cmdModal.classList.add('active');
+          keyBuffer = '';
+        }
+      } else {
+        keyBuffer = '';
+      }
+    });
+
+    function executeCommand(num) {
+      switch(num) {
+        case 1: // ① 休憩から始める (25/5) ➔ 5分休憩スタート
+          setTimerPreset(25, 5);
+          startBreakModeDirectly(5 * 60);
+          break;
+        case 2: // ② 休憩から始める (50/10) ➔ 10分休憩スタート
+          setTimerPreset(50, 10);
+          startBreakModeDirectly(10 * 60);
+          break;
+        case 3: // ③ 通常 (25/5)
+          setTimerPreset(25, 5);
+          break;
+        case 4: // ④ 長め (50/10)
+          setTimerPreset(50, 10);
+          break;
+        case 5: // ⑤ +10分
+          timeLeft += 10 * 60;
+          updateDisplay();
+          break;
+        case 6: // ⑥ +25分
+          timeLeft += 25 * 60;
+          updateDisplay();
+          break;
+        case 7: // ⑦ ネイビー/ワイン
+          setColorTheme('#191970', '#3d0c11', document.querySelectorAll('.color-chip')[0]);
+          break;
+        case 8: // ⑧ ピンクダーク
+          setColorTheme('#4a1525', '#1a0008', document.querySelectorAll('.color-chip')[1]);
+          break;
+        case 9: // ⑨ フルブラック
+          setColorTheme('#0a0a0a', '#1a1a1a', document.querySelectorAll('.color-chip')[2]);
+          break;
+        case 10: // ⑩ サイバーグリーン
+          setColorTheme('#0b2b18', '#1c0b2b', document.querySelectorAll('.color-chip')[3]);
+          break;
+      }
+    }
+
+    function startBreakModeDirectly(breakSec) {
+      pauseTimer();
+      isWorkMode = false;
+      timeLeft = breakSec;
+      statusDisplay.textContent = 'BREAK TIME';
+      document.body.classList.add('break-mode');
+      updateDisplay();
+    }
+
     window.addEventListener('beforeunload', (e) => {
       if (timerId !== null) {
         e.preventDefault();
-        e.returnValue = ''; // ブラウザ標準の確認ダイアログを表示
+        e.returnValue = '';
       }
     });
 
@@ -748,6 +1049,7 @@
       if (e.key === 'Enter') changeBgm();
     });
 
+    checkAgeVerification();
     updateDisplay();
   </script>
 </body>
