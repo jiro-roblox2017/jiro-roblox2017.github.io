@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JIRO HUB - Todoリスト</title>
+  
+  <link rel="icon" href="icon.jpg" type="image/jpeg">
+  <link rel="icon" href="favicon.png" type="image/png">
+
+  <style>
+    :root {
+      --bg-main: #0a0a0a;          /* 極限まで黒に近いダーク背景 */
+      --card-bg: #141414;          /* カード背景 */
+      --card-hover: #1f1f1f;       /* カードホバー時 */
+      --text-main: #ffffff;        /* 完全な白文字 */
+      --text-sub: #a0a0a0;         /* 補足用グレー文字 */
+      --accent-orange: #F7971D;    /* 指定された差し色オレンジ */
+      --accent-orange-hover: #ff9f2e;
+      --input-bg: rgba(255, 255, 255, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* --- 年齢確認モーダル --- */
+    .age-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .age-modal.active {
+      display: flex;
+    }
+
+    .age-modal-content {
+      background-color: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 32px 24px;
+      border-radius: 16px;
+      text-align: center;
+      max-width: 380px;
+      width: 90%;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9);
+    }
+
+    .age-modal-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 12px;
+      color: var(--text-main);
+    }
+
+    .age-modal-desc {
+      font-size: 0.9rem;
+      color: var(--text-sub);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .age-btn-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .age-btn {
+      flex: 1;
+      padding: 10px 16px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+
+    .age-btn.yes {
+      background-color: var(--accent-orange);
+      color: #000000;
+    }
+
+    .age-btn.no {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: var(--text-sub);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .age-btn:hover {
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
+
+    /* --- メインコンテンツ --- */
+    main {
+      padding: 40px 20px;
+      max-width: 720px;
+      margin: 0 auto;
+      flex: 1;
+      width: 100%;
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* 入力フォームエリア */
+    .todo-input-section {
+      background-color: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .input-row input {
+      flex: 1;
+      background: var(--input-bg);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--text-main);
+      padding: 0.8rem 1.2rem;
+      border-radius: 30px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-row input:focus {
+      border-color: var(--accent-orange);
+    }
+
+    .add-btn {
+      background: var(--accent-orange);
+      color: #000;
+      border: none;
+      padding: 0 1.8rem;
+      font-weight: bold;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .add-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    /* タグ選択ボタン群 (1〜7) */
+    .tag-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag-chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-sub);
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tag-chip kbd {
+      background: rgba(0, 0, 0, 0.4);
+      color: var(--accent-orange);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-family: inherit;
+    }
+
+    .tag-chip.active {
+      background-color: var(--accent-orange);
+      color: #000;
+      border-color: var(--accent-orange);
+      font-weight: bold;
+    }
+
+    .tag-chip.active kbd {
+      background: rgba(0, 0, 0, 0.2);
+      color: #000;
+    }
+
+    /* Todoリスト一覧 */
+    .todo-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .todo-item {
+      background-color: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 14px 18px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      transition: background-color 0.2s, transform 0.2s;
+    }
+
+    .todo-item:hover {
+      background-color: var(--card-hover);
+    }
+
+    .todo-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .todo-checkbox {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--accent-orange);
+      cursor: pointer;
+    }
+
+    .todo-text {
+      font-size: 1rem;
+      word-break: break-all;
+      transition: color 0.2s;
+    }
+
+    .todo-item.completed .todo-text {
+      color: var(--text-sub);
+      text-decoration: line-through;
+    }
+
+    .todo-tag {
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+      background: rgba(247, 151, 29, 0.15);
+      color: var(--accent-orange);
+      border: 1px solid rgba(247, 151, 29, 0.3);
+      white-space: nowrap;
+    }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      color: var(--text-sub);
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .delete-btn:hover {
+      color: #ff4d4d;
+      background: rgba(255, 77, 77, 0.1);
+    }
+
+    .empty-msg {
+      text-align: center;
+      color: var(--text-sub);
+      padding: 40px 0;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 初回アクセス用 年齢確認モーダル -->
+  <div class="age-modal" id="ageModal">
+    <div class="age-modal-content">
+      <div class="age-modal-title">年齢確認</div>
+      <div class="age-modal-desc">あなたは 18 歳以上ですか？</div>
+      <div class="age-btn-group">
+        <button class="age-btn yes" onclick="verifyAge(true)">はい (Y)</button>
+        <button class="age-btn no" onclick="verifyAge(false)">いいえ (N)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 共通ヘッダー自動読み込みプレースホルダー -->
+  <div id="header-placeholder"></div>
+
+  <main>
+    <div class="page-title">📝 タスク管理 Todoリスト</div>
+
+    <!-- 入力・タグ選択セクション -->
+    <div class="todo-input-section">
+      <div class="input-row">
+        <input type="text" id="todoInput" placeholder="新しいタスクを入力... (Enterで追加)">
+        <button class="add-btn" onclick="addTodo()">追加</button>
+      </div>
+      <div class="tag-selector" id="tagSelector">
+        <div class="tag-chip active" data-tag="国語" onclick="selectTag('国語')"><kbd>1</kbd> 国語</div>
+        <div class="tag-chip" data-tag="数学" onclick="selectTag('数学')"><kbd>2</kbd> 数学</div>
+        <div class="tag-chip" data-tag="英語" onclick="selectTag('英語')"><kbd>3</kbd> 英語</div>
+        <div class="tag-chip" data-tag="社会" onclick="selectTag('社会')"><kbd>4</kbd> 社会</div>
+        <div class="tag-chip" data-tag="理科" onclick="selectTag('理科')"><kbd>5</kbd> 理科</div>
+        <div class="tag-chip" data-tag="副教科" onclick="selectTag('副教科')"><kbd>6</kbd> 副教科</div>
+        <div class="tag-chip" data-tag="その他" onclick="selectTag('その他')"><kbd>7</kbd> その他</div>
+      </div>
+    </div>
+
+    <!-- Todo一覧 -->
+    <div class="todo-list" id="todoList">
+      <!-- JavaScriptで動的生成 -->
+    </div>
+  </main>
+
+  <script>
+    // --- 共通ヘッダーの自動読み込み ---
+    fetch('header.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('header-placeholder').innerHTML = data;
+      });
+
+    // --- 初回アクセス時 年齢確認機能（localStorage対応） ---
+    function checkAgeVerification() {
+      const isVerified = localStorage.getItem('age_verified');
+      if (isVerified !== 'true') {
+        document.getElementById('ageModal').classList.add('active');
+      }
+    }
+
+    function verifyAge(isOver18) {
+      if (isOver18) {
+        localStorage.setItem('age_verified', 'true');
+        document.getElementById('ageModal').classList.remove('active');
+      } else {
+        localStorage.setItem('age_verified', 'false');
+        alert("18歳未満の方はご利用いただけません。");
+        window.location.href = "https://www.google.com";
+      }
+    }
+
+    // --- 共通 QRコードモーダル制御 ---
+    function openQrModal() {
+      const modal = document.getElementById('qrModal');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeQrModal() {
+      const modal = document.getElementById('qrModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function closeQrModalOnBg(event) {
+      if (event.target.id === 'qrModal') {
+        closeQrModal();
+      }
+    }
+
+    // --- Todoリスト ＆ キーボードショートカット機能 ---
+    let todos = JSON.parse(localStorage.getItem('jiro_todos')) || [];
+    let currentTag = '国語';
+
+    const tags = ['国語', '数学', '英語', '社会', '理科', '副教科', 'その他'];
+
+    function selectTag(tagName) {
+      currentTag = tagName;
+      document.querySelectorAll('.tag-chip').forEach(chip => {
+        if (chip.getAttribute('data-tag') === tagName) {
+          chip.classList.add('active');
+        } else {
+          chip.classList.remove('active');
+        }
+      });
+    }
+
+    // キーボードショートカット (1〜7キーでタグ切り替え)
+    window.addEventListener('keydown', (e) => {
+      // インプット入力中でなければ数字キーに反応
+      if (document.activeElement.tagName === 'INPUT') return;
+
+      const num = parseInt(e.key);
+      if (num >= 1 && num <= 7) {
+        selectTag(tags[num - 1]);
+        e.preventDefault();
+      }
+    });
+
+    function saveTodos() {
+      localStorage.setItem('jiro_todos', JSON.stringify(todos));
+    }
+
+    function addTodo() {
+      const input = document.getElementById('todoInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const newTodo = {
+        id: Date.now(),
+        text: text,
+        tag: currentTag,
+        completed: false
+      };
+
+      todos.unshift(newTodo); // 新しいものを上に追加
+      saveTodos();
+      renderTodos();
+      input.value = '';
+    }
+
+    function toggleTodo(id) {
+      todos = todos.map(todo => {
+        if (todo.id === id) {
+          return { ...todo, completed: !todo.completed };
+        }
+        return todo;
+      });
+      saveTodos();
+      renderTodos();
+    }
+
+    function deleteTodo(id) {
+      todos = todos.filter(todo => todo.id !== id);
+      saveTodos();
+      renderTodos();
+    }
+
+    function renderTodos() {
+      const listContainer = document.getElementById('todoList');
+      if (todos.length === 0) {
+        listContainer.innerHTML = '<div class="empty-msg">タスクはまだありません。上から追加してみよう！</div>';
+        return;
+      }
+
+      listContainer.innerHTML = '';
+      todos.forEach(todo => {
+        const item = document.createElement('div');
+        item.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+        
+        item.innerHTML = `
+          <div class="todo-left">
+            <input type="checkbox" class="todo-checkbox" ${todo.completed ? 'checked' : ''} onclick="toggleTodo(${todo.id})">
+            <span class="todo-text">${escapeHtml(todo.text)}</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span class="todo-tag">${todo.tag}</span>
+            <button class="delete-btn" onclick="deleteTodo(${todo.id})">×</button>
+          </div>
+        `;
+        listContainer.appendChild(item);
+      });
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&'`<>"]/g, match => ({
+        '&': '&amp;',
+        'quot;': '&quot;',
+        '&#39;': '&#39;',
+        '<': '&lt;',
+        '>': '&gt;',
+      }[match] || match));
+    }
+
+    // Enterキーで追加
+    document.getElementById('todoInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        addTodo();
+      }
+    });
+
+    // 初期化実行
+    checkAgeVerification();
+    renderTodos();
+  </script>
+</body>
+</html>
