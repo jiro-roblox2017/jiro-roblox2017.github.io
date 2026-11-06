@@ -409,20 +409,42 @@
       color: var(--text-sub);
     }
 
-    /* --- セクション2：動画・設定・プレイリストエリア --- */
+    /* --- セクション2：左右分割レイアウト（左：動画＋プレイリスト / 右：設定） --- */
     .video-section {
       padding: 60px 20px 80px 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 24px;
       background-color: var(--card-bg);
       border-top: 1px solid #1f1f1f;
+      display: flex;
+      justify-content: center;
+    }
+
+    .split-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      width: 100%;
+      max-width: 1100px;
+      align-items: flex-start;
+    }
+
+    /* 左カラム：動画 ＋ プレイリスト */
+    .left-column {
+      flex: 1 1 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* 右カラム：各種設定 */
+    .right-column {
+      flex: 1 1 340px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
 
     .video-container {
       width: 100%;
-      max-width: 720px;
       aspect-ratio: 16 / 9;
       border-radius: 12px;
       overflow: hidden;
@@ -437,90 +459,8 @@
       border: 0;
     }
 
-    .settings-grid {
-      width: 100%;
-      max-width: 720px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .setting-box {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 16px 20px;
-      border-radius: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .box-label {
-      font-size: 0.85rem;
-      color: var(--text-sub);
-      font-weight: 600;
-    }
-
-    .timer-preset-group {
-      display: flex;
-      gap: 8px;
-    }
-
-    .preset-btn {
-      flex: 1;
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text-sub);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 0.6rem;
-      font-size: 0.9rem;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-align: center;
-      font-weight: 600;
-    }
-
-    .preset-btn.active {
-      background: var(--accent-orange);
-      color: #000;
-      border-color: var(--accent-orange);
-    }
-
-    .color-presets {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .color-chip {
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text-main);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 6px 12px;
-      font-size: 0.8rem;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .color-chip.active {
-      border-color: var(--accent-orange);
-      background: rgba(255, 255, 255, 0.15);
-    }
-
-    .color-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-    }
-
     /* プレイリストボックス */
     .playlist-section {
-      width: 100%;
-      max-width: 720px;
       background: rgba(255, 255, 255, 0.02);
       border: 1px solid rgba(255, 255, 255, 0.1);
       padding: 20px;
@@ -564,7 +504,7 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      max-height: 240px;
+      max-height: 280px;
       overflow-y: auto;
       padding-right: 4px;
     }
@@ -641,6 +581,79 @@
       font-size: 0.85rem;
       padding: 16px 0;
     }
+
+    /* 右カラム設定ボックス */
+    .setting-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .box-label {
+      font-size: 0.9rem;
+      color: var(--accent-orange);
+      font-weight: bold;
+    }
+
+    .timer-preset-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .preset-btn {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-sub);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.8rem;
+      font-size: 0.95rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .preset-btn.active {
+      background: var(--accent-orange);
+      color: #000;
+      border-color: var(--accent-orange);
+    }
+
+    .color-presets {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .color-chip {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .color-chip.active {
+      border-color: var(--accent-orange);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .color-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+    }
   </style>
 </head>
 <body>
@@ -657,7 +670,7 @@
     </div>
   </div>
 
-  <!-- コマンドモード モーダル (67入力で起動) -->
+  <!-- コマンドモード モーダル (67) -->
   <div class="cmd-modal" id="cmdModal">
     <div class="cmd-content">
       <div class="cmd-header">
@@ -694,59 +707,66 @@
     </div>
   </section>
 
-  <!-- 動画 ＆ 各種設定・プレイリストエリア -->
+  <!-- 左右分割エリア（左：プレイヤー＆リスト / 右：設定） -->
   <section class="video-section">
-    <div class="video-container">
-      <iframe 
-        id="bgmIframe"
-        src="" 
-        title="YouTube video player" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-        referrerpolicy="strict-origin-when-cross-origin" 
-        allowfullscreen>
-      </iframe>
-    </div>
+    <div class="split-container">
+      
+      <!-- 左カラム -->
+      <div class="left-column">
+        <div class="video-container">
+          <iframe 
+            id="bgmIframe"
+            src="" 
+            title="YouTube video player" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            referrerpolicy="strict-origin-when-cross-origin" 
+            allowfullscreen>
+          </iframe>
+        </div>
 
-    <div class="settings-grid">
-      <!-- タイマー時間設定 -->
-      <div class="setting-box">
-        <div class="box-label">⏱️ タイマー時間設定</div>
-        <div class="timer-preset-group">
-          <button class="preset-btn" id="preset25" onclick="setTimerPreset(25, 5)">25分 / 5分</button>
-          <button class="preset-btn active" id="preset50" onclick="setTimerPreset(50, 10)">50分 / 10分</button>
+        <div class="playlist-section">
+          <div class="playlist-title">🎵 マイプレイリスト (LocalStorage保存)</div>
+          <div class="playlist-input-group">
+            <input type="text" id="playlistUrlInput" placeholder="YouTube URLまたはIDを入力して追加">
+            <button onclick="addPlaylistTrack()">追加</button>
+          </div>
+          <div class="playlist-items" id="playlistContainer">
+            <!-- JavaScriptで動的生成 -->
+          </div>
         </div>
       </div>
 
-      <!-- カラーテーマ設定 -->
-      <div class="setting-box">
-        <div class="box-label">🎨 カラーテーマ（勉強時 / 休憩時）</div>
-        <div class="color-presets">
-          <button class="color-chip active" onclick="setColorTheme('#0F2350', '#3a1015', this)">
-            <span class="color-dot" style="background:#0F2350;"></span>ネイビー/ワイン
-          </button>
-          <button class="color-chip" onclick="setColorTheme('#4a1525', '#1a0008', this)">
-            <span class="color-dot" style="background:#ff6b00;"></span>ピンクダーク
-          </button>
-          <button class="color-chip" onclick="setColorTheme('#0a0a0a', '#1a1a1a', this)">
-            <span class="color-dot" style="background:#ffffff;"></span>フルブラック
-          </button>
-          <button class="color-chip" onclick="setColorTheme('#0b2b18', '#1c0b2b', this)">
-            <span class="color-dot" style="background:#2ecc71;"></span>サイバーグリーン
-          </button>
+      <!-- 右カラム -->
+      <div class="right-column">
+        <!-- タイマー時間設定枠 -->
+        <div class="setting-box">
+          <div class="box-label">⏱️ タイマー時間設定</div>
+          <div class="timer-preset-group">
+            <button class="preset-btn" id="preset25" onclick="setTimerPreset(25, 5)">25分集中 / 5分休憩</button>
+            <button class="preset-btn active" id="preset50" onclick="setTimerPreset(50, 10)">50分集中 / 10分休憩</button>
+          </div>
+        </div>
+
+        <!-- カラーテーマ設定枠 -->
+        <div class="setting-box">
+          <div class="box-label">🎨 カラーテーマ</div>
+          <div class="color-presets">
+            <button class="color-chip active" onclick="setColorTheme('#0F2350', '#3a1015', this)">
+              <span class="color-dot" style="background:#0F2350;"></span>ネイビー / ワイン
+            </button>
+            <button class="color-chip" onclick="setColorTheme('#4a1525', '#1a0008', this)">
+              <span class="color-dot" style="background:#ff6b00;"></span>ピンクダーク
+            </button>
+            <button class="color-chip" onclick="setColorTheme('#0a0a0a', '#1a1a1a', this)">
+              <span class="color-dot" style="background:#ffffff;"></span>フルブラック
+            </button>
+            <button class="color-chip" onclick="setColorTheme('#0b2b18', '#1c0b2b', this)">
+              <span class="color-dot" style="background:#2ecc71;"></span>サイバーグリーン
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- 疑似プレイリスト管理ボックス -->
-    <div class="playlist-section">
-      <div class="playlist-title">🎵 マイプレイリスト (LocalStorage保存)</div>
-      <div class="playlist-input-group">
-        <input type="text" id="playlistUrlInput" placeholder="YouTube URLまたはIDを入力して追加">
-        <button onclick="addPlaylistTrack()">追加</button>
-      </div>
-      <div class="playlist-items" id="playlistContainer">
-        <!-- JavaScriptで動的生成 -->
-      </div>
     </div>
   </section>
 
