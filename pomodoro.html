@@ -207,7 +207,7 @@
       text-align: center;
     }
 
-    /* --- ヘッダー・ナビゲーション --- */
+    /* --- 共通ヘッダー表示領域 & スタイル --- */
     .header-group {
       position: sticky;
       top: 0;
@@ -245,7 +245,6 @@
       color: var(--accent-orange);
     }
 
-    /* --- QRコード モーダル --- */
     .qr-modal {
       display: none;
       position: fixed;
@@ -632,28 +631,8 @@
     </div>
   </div>
 
-  <div class="header-group">
-    <div class="top-bar">
-      <button class="qr-trigger-btn" onclick="openQrModal()">📱 QRコード</button>
-      <a href="about.html">このサイトについて</a>
-      <a href="disclaimer.html">免責事項</a>
-    </div>
-
-    <header>
-      <a href="index.html" class="logo">
-        <span class="logo-icon">🔞</span>
-        <span class="logo-text">Jiro<span>hub</span></span>
-      </a>
-    </header>
-  </div>
-
-  <!-- QRコード モーダル -->
-  <div class="qr-modal" id="qrModal" onclick="closeQrModalOnBg(event)">
-    <div class="qr-modal-content">
-      <img src="QR.png" alt="シェア用QRコード">[cite: 1]
-      <button class="qr-close-btn" onclick="closeQrModal()">閉じる</button>
-    </div>
-  </div>
+  <!-- 共通ヘッダー読み込み位置 -->
+  <div id="header-placeholder"></div>
 
   <section class="timer-section">
     <div class="container">
@@ -737,6 +716,13 @@
   </section>
 
   <script>
+    // --- 共通ヘッダーの自動読み込み ---
+    fetch('header.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('header-placeholder').innerHTML = data;
+      });
+
     // --- 初回アクセス時 年齢確認機能（localStorage対応） ---
     function checkAgeVerification() {
       const isVerified = localStorage.getItem('age_verified');
@@ -753,6 +739,23 @@
         localStorage.setItem('age_verified', 'false');
         alert("18歳未満の方はご利用いただけません。");
         window.location.href = "https://www.google.com";
+      }
+    }
+
+    // --- QRコード モーダル制御関数 ---
+    function openQrModal() {
+      const modal = document.getElementById('qrModal');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeQrModal() {
+      const modal = document.getElementById('qrModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function closeQrModalOnBg(event) {
+      if (event.target.id === 'qrModal') {
+        closeQrModal();
       }
     }
 
@@ -818,38 +821,38 @@
 
     function executeCommand(num) {
       switch(num) {
-        case 1: // ① 休憩から始める (25/5) ➔ 5分休憩スタート
+        case 1:
           setTimerPreset(25, 5);
           startBreakModeDirectly(5 * 60);
           break;
-        case 2: // ② 休憩から始める (50/10) ➔ 10分休憩スタート
+        case 2:
           setTimerPreset(50, 10);
           startBreakModeDirectly(10 * 60);
           break;
-        case 3: // ③ 通常 (25/5)
+        case 3:
           setTimerPreset(25, 5);
           break;
-        case 4: // ④ 長め (50/10)
+        case 4:
           setTimerPreset(50, 10);
           break;
-        case 5: // ⑤ +10分
+        case 5:
           timeLeft += 10 * 60;
           updateDisplay();
           break;
-        case 6: // ⑥ +25分
+        case 6:
           timeLeft += 25 * 60;
           updateDisplay();
           break;
-        case 7: // ⑦ ネイビー/ワイン
+        case 7:
           setColorTheme('#191970', '#3d0c11', document.querySelectorAll('.color-chip')[0]);
           break;
-        case 8: // ⑧ ピンクダーク
+        case 8:
           setColorTheme('#4a1525', '#1a0008', document.querySelectorAll('.color-chip')[1]);
           break;
-        case 9: // ⑨ フルブラック
+        case 9:
           setColorTheme('#0a0a0a', '#1a1a1a', document.querySelectorAll('.color-chip')[2]);
           break;
-        case 10: // ⑩ サイバーグリーン
+        case 10:
           setColorTheme('#0b2b18', '#1c0b2b', document.querySelectorAll('.color-chip')[3]);
           break;
       }
@@ -870,20 +873,6 @@
         e.returnValue = '';
       }
     });
-
-    function openQrModal() {
-      document.getElementById('qrModal').classList.add('active');
-    }
-
-    function closeQrModal() {
-      document.getElementById('qrModal').classList.remove('active');
-    }
-
-    function closeQrModalOnBg(event) {
-      if (event.target.id === 'qrModal') {
-        closeQrModal();
-      }
-    }
 
     function updateDisplay() {
       const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
