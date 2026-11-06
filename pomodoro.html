@@ -409,7 +409,7 @@
       color: var(--text-sub);
     }
 
-    /* --- セクション2：動画＆プレイリストエリア --- */
+    /* --- セクション2：動画・設定・プレイリストエリア --- */
     .video-section {
       padding: 60px 20px 80px 20px;
       display: flex;
@@ -437,6 +437,87 @@
       border: 0;
     }
 
+    .settings-grid {
+      width: 100%;
+      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .setting-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 16px 20px;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .box-label {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      font-weight: 600;
+    }
+
+    .timer-preset-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .preset-btn {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-sub);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.6rem;
+      font-size: 0.9rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .preset-btn.active {
+      background: var(--accent-orange);
+      color: #000;
+      border-color: var(--accent-orange);
+    }
+
+    .color-presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .color-chip {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .color-chip.active {
+      border-color: var(--accent-orange);
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .color-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    /* プレイリストボックス */
     .playlist-section {
       width: 100%;
       max-width: 720px;
@@ -483,7 +564,7 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      max-height: 280px;
+      max-height: 240px;
       overflow-y: auto;
       padding-right: 4px;
     }
@@ -613,7 +694,7 @@
     </div>
   </section>
 
-  <!-- 動画 ＆ プレイリストエリア -->
+  <!-- 動画 ＆ 各種設定・プレイリストエリア -->
   <section class="video-section">
     <div class="video-container">
       <iframe 
@@ -624,6 +705,36 @@
         referrerpolicy="strict-origin-when-cross-origin" 
         allowfullscreen>
       </iframe>
+    </div>
+
+    <div class="settings-grid">
+      <!-- タイマー時間設定 -->
+      <div class="setting-box">
+        <div class="box-label">⏱️ タイマー時間設定</div>
+        <div class="timer-preset-group">
+          <button class="preset-btn" id="preset25" onclick="setTimerPreset(25, 5)">25分 / 5分</button>
+          <button class="preset-btn active" id="preset50" onclick="setTimerPreset(50, 10)">50分 / 10分</button>
+        </div>
+      </div>
+
+      <!-- カラーテーマ設定 -->
+      <div class="setting-box">
+        <div class="box-label">🎨 カラーテーマ（勉強時 / 休憩時）</div>
+        <div class="color-presets">
+          <button class="color-chip active" onclick="setColorTheme('#0F2350', '#3a1015', this)">
+            <span class="color-dot" style="background:#0F2350;"></span>ネイビー/ワイン
+          </button>
+          <button class="color-chip" onclick="setColorTheme('#4a1525', '#1a0008', this)">
+            <span class="color-dot" style="background:#ff6b00;"></span>ピンクダーク
+          </button>
+          <button class="color-chip" onclick="setColorTheme('#0a0a0a', '#1a1a1a', this)">
+            <span class="color-dot" style="background:#ffffff;"></span>フルブラック
+          </button>
+          <button class="color-chip" onclick="setColorTheme('#0b2b18', '#1c0b2b', this)">
+            <span class="color-dot" style="background:#2ecc71;"></span>サイバーグリーン
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- 疑似プレイリスト管理ボックス -->
@@ -681,6 +792,16 @@
       if (event.target.id === 'qrModal') {
         closeQrModal();
       }
+    }
+
+    // --- カラーテーマ切り替え関数 ---
+    function setColorTheme(workBg, breakBg, btnElement) {
+      document.documentElement.style.setProperty('--bg-work', workBg);
+      document.documentElement.style.setProperty('--bg-break', breakBg);
+      document.body.style.backgroundColor = workBg;
+
+      document.querySelectorAll('.color-chip').forEach(btn => btn.classList.remove('active'));
+      if (btnElement) btnElement.classList.add('active');
     }
 
     // --- プレイリスト管理ロジック (localStorage + 初期プリセット) ---
@@ -893,6 +1014,10 @@
       breakMinutes = brk;
       WORK_TIME = workMinutes * 60;
       BREAK_TIME = breakMinutes * 60;
+
+      document.getElementById('preset25').classList.toggle('active', work === 25);
+      document.getElementById('preset50').classList.toggle('active', work === 50);
+
       resetTimer();
     }
 
