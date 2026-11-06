@@ -112,6 +112,139 @@
       opacity: 0.9;
     }
 
+    /* --- ヘッダー関連のスタイル（確実に適用させるため内包） --- */
+    .header-group {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background-color: rgba(10, 10, 10, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #1f1f1f;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 16px;
+      padding: 6px 24px;
+      background-color: rgba(0, 0, 0, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.75rem;
+    }
+
+    .top-bar a, .qr-trigger-btn {
+      color: var(--text-sub);
+      text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-family: inherit;
+      padding: 0;
+      transition: color 0.2s ease;
+    }
+
+    .top-bar a:hover, .qr-trigger-btn:hover {
+      color: var(--text-main);
+    }
+
+    header {
+      height: 54px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: var(--text-main);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-icon {
+      color: var(--accent-orange);
+      font-size: 1.4rem;
+    }
+
+    .logo-text span {
+      background-color: var(--accent-orange);
+      color: #000000;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9em;
+      margin-left: 4px;
+      display: inline-block;
+      line-height: 1.2;
+      font-weight: 900;
+    }
+
+    /* QRコード モーダル */
+    .qr-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .qr-modal.active {
+      display: flex;
+    }
+
+    .qr-modal-content {
+      background-color: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 24px;
+      border-radius: 16px;
+      text-align: center;
+      max-width: 320px;
+      width: 90%;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
+      position: relative;
+    }
+
+    .qr-modal-content img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+
+    .qr-close-btn {
+      background: var(--accent-orange);
+      color: #000;
+      border: none;
+      padding: 8px 20px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .qr-close-btn:hover {
+      opacity: 0.85;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
     /* --- メインコンテンツ --- */
     main {
       padding: 40px 20px;
@@ -130,7 +263,6 @@
       gap: 10px;
     }
 
-    /* 入力フォームエリア */
     .todo-input-section {
       background-color: var(--card-bg);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -256,6 +388,14 @@
       height: 20px;
       accent-color: var(--accent-orange);
       cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .todo-content-box {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      overflow: hidden;
     }
 
     .todo-text {
@@ -267,6 +407,11 @@
     .todo-item.completed .todo-text {
       color: var(--text-sub);
       text-decoration: line-through;
+    }
+
+    .todo-time {
+      font-size: 0.7rem;
+      color: var(--text-sub);
     }
 
     .todo-tag {
@@ -410,7 +555,6 @@
 
     // キーボードショートカット (1〜7キーでタグ切り替え)
     window.addEventListener('keydown', (e) => {
-      // インプット入力中でなければ数字キーに反応
       if (document.activeElement.tagName === 'INPUT') return;
 
       const num = parseInt(e.key);
@@ -429,14 +573,23 @@
       const text = input.value.trim();
       if (!text) return;
 
+      // 現在日時を取得して「MM/DD HH:MM」形式の文字列を作成
+      const now = new Date();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const timeString = `${month}/${day} ${hours}:${minutes}作成`;
+
       const newTodo = {
         id: Date.now(),
         text: text,
         tag: currentTag,
+        createdAt: timeString,
         completed: false
       };
 
-      todos.unshift(newTodo); // 新しいものを上に追加
+      todos.unshift(newTodo);
       saveTodos();
       renderTodos();
       input.value = '';
@@ -474,7 +627,10 @@
         item.innerHTML = `
           <div class="todo-left">
             <input type="checkbox" class="todo-checkbox" ${todo.completed ? 'checked' : ''} onclick="toggleTodo(${todo.id})">
-            <span class="todo-text">${escapeHtml(todo.text)}</span>
+            <div class="todo-content-box">
+              <span class="todo-text">${escapeHtml(todo.text)}</span>
+              <span class="todo-time">${todo.createdAt || ''}</span>
+            </div>
           </div>
           <div style="display: flex; align-items: center; gap: 10px;">
             <span class="todo-tag">${todo.tag}</span>
@@ -488,14 +644,13 @@
     function escapeHtml(str) {
       return str.replace(/[&'`<>"]/g, match => ({
         '&': '&amp;',
-        'quot;': '&quot;',
-        '&#39;': '&#39;',
+        '"': '&quot;',
+        "'": '&#39;',
         '<': '&lt;',
         '>': '&gt;',
       }[match] || match));
     }
 
-    // Enterキーで追加
     document.getElementById('todoInput').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         addTodo();
