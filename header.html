@@ -1,0 +1,23 @@
+<div class="header-group">
+  <!-- 最上部サブバー：QRコード・このサイトについて・免責事項を同列に配置 -->
+  <div class="top-bar">
+    <button class="qr-trigger-btn" onclick="openQrModal()">📱 QRコード</button>
+    <a href="about.html">このサイトについて</a>
+    <a href="disclaimer.html">免責事項</a>
+  </div>
+
+  <header>
+    <a href="index.html" class="logo">
+      <span class="logo-icon">🔞</span>
+      <span class="logo-text">Jiro<span>hub</span></span>
+    </a>
+  </header>
+</div>
+
+<!-- 全ページ共通 QRコード モーダル -->
+<div class="qr-modal" id="qrModal" onclick="closeQrModalOnBg(event)">
+  <div class="qr-modal-content">
+    <img src="QR.png" alt="シェア用QRコード">[cite: 1]
+    <button class="qr-close-btn" onclick="closeQrModal()">閉じる</button>
+  </div>
+</div>
