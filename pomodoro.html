@@ -10,8 +10,8 @@
 
   <style>
     :root {
-      --bg-work: #191970;          
-      --bg-break: #3d0c11;         
+      --bg-work: #0F2350;          
+      --bg-break: #3a1015;         
       --card-bg: #141414;
       --text-main: #ffffff;        
       --text-sub: #a0a0a0;         
@@ -127,7 +127,7 @@
       opacity: 0.9;
     }
 
-    /* --- コマンドモード モーダル --- */
+    /* --- コマンドモード モーダル (67) --- */
     .cmd-modal {
       display: none;
       position: fixed;
@@ -184,8 +184,6 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border: 1px solid transparent;
-      transition: all 0.2s;
     }
 
     .cmd-item span.num {
@@ -207,7 +205,7 @@
       text-align: center;
     }
 
-    /* --- 共通ヘッダー表示領域 & スタイル --- */
+    /* --- 固定ヘッダーグループ --- */
     .header-group {
       position: sticky;
       top: 0;
@@ -215,7 +213,6 @@
       background-color: rgba(10, 10, 10, 0.9);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid #1f1f1f;
-      height: 80px;
     }
 
     .top-bar {
@@ -242,7 +239,7 @@
     }
 
     .top-bar a:hover, .qr-trigger-btn:hover {
-      color: var(--accent-orange);
+      color: var(--text-main);
     }
 
     .qr-modal {
@@ -340,9 +337,9 @@
       font-weight: 900;
     }
 
+    /* --- セクション1：タイマーエリア --- */
     .timer-section {
-      height: calc(100vh - 80px);
-      min-height: 500px;
+      min-height: calc(100vh - 84px);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -355,15 +352,15 @@
     }
 
     .status {
-      font-size: 1.5rem;
-      letter-spacing: 0.2em;
+      font-size: 1.4rem;
+      letter-spacing: 0.15em;
       margin-bottom: 1rem;
       color: var(--text-sub);
       font-weight: 600;
     }
 
     .timer {
-      font-size: 8rem;
+      font-size: 6.5rem;
       font-weight: 200;
       font-variant-numeric: tabular-nums;
       margin-bottom: 2.5rem;
@@ -372,33 +369,23 @@
 
     .controls {
       display: flex;
-      gap: 1.2rem;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 1rem;
       justify-content: center;
-      margin-bottom: 16px;
-    }
-
-    .fs-btn {
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text-sub);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 0.4rem 1.2rem;
-      font-size: 0.85rem;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .fs-btn:hover {
-      color: var(--text-main);
-      border-color: var(--accent-orange);
     }
 
     button, .link-btn {
       background: var(--btn-bg);
       color: var(--text-main);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 0.8rem 2.5rem;
-      font-size: 1.05rem;
+      padding: 0.75rem 2.2rem;
+      font-size: 1rem;
       border-radius: 30px;
       cursor: pointer;
       backdrop-filter: blur(5px);
@@ -416,52 +403,26 @@
       transform: translateY(-2px);
     }
 
+    .fs-btn {
+      font-size: 0.85rem;
+      padding: 0.4rem 1.2rem;
+      color: var(--text-sub);
+    }
+
+    /* --- セクション2：動画＆プレイリストエリア --- */
     .video-section {
-      min-height: 1080px;
-      padding: 60px 20px 100px 20px;
-      background-color: var(--card-bg);
-      border-top: 1px solid #1f1f1f;
+      padding: 60px 20px 80px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
-    }
-
-    .section-title {
-      font-size: 1.1rem;
-      color: var(--text-sub);
-      letter-spacing: 0.1em;
-      margin-bottom: 24px;
-    }
-
-    .split-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 30px;
-      width: 100%;
-      max-width: 1100px;
-      justify-content: center;
-    }
-
-    .left-panel {
-      flex: 1 1 500px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .right-panel {
-      flex: 1 1 400px;
-      display: flex;
-      flex-direction: column;
       gap: 24px;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid #262626;
-      padding: 24px;
-      border-radius: 16px;
+      background-color: var(--card-bg);
+      border-top: 1px solid #1f1f1f;
     }
 
     .video-container {
       width: 100%;
+      max-width: 720px;
       aspect-ratio: 16 / 9;
       border-radius: 12px;
       overflow: hidden;
@@ -476,121 +437,128 @@
       border: 0;
     }
 
-    .setting-box {
+    .playlist-section {
+      width: 100%;
+      max-width: 720px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 16px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 16px;
     }
 
-    .box-label {
-      font-size: 0.85rem;
-      color: var(--text-sub);
-      font-weight: 600;
-    }
-
-    .timer-preset-group {
-      display: flex;
-      gap: 8px;
-    }
-
-    .preset-btn {
-      flex: 1;
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text-sub);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 0.6rem;
-      font-size: 0.85rem;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-align: center;
-    }
-
-    .preset-btn.active {
-      background: var(--accent-orange);
-      color: #000;
+    .playlist-title {
+      font-size: 1rem;
       font-weight: bold;
-      border-color: var(--accent-orange);
-    }
-
-    .color-presets {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .color-chip {
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text-main);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 6px 12px;
-      font-size: 0.8rem;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: all 0.2s ease;
+      color: var(--accent-orange);
       display: flex;
       align-items: center;
-      gap: 6px;
-    }
-
-    .color-chip.active {
-      border-color: var(--accent-orange);
-      background: rgba(255, 255, 255, 0.15);
-    }
-
-    .color-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-    }
-
-    .bgm-presets {
-      display: flex;
-      flex-wrap: wrap;
       gap: 8px;
     }
 
-    .bgm-chip {
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text-sub);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 6px 12px;
-      font-size: 0.8rem;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .bgm-chip:hover, .bgm-chip.active {
-      background: var(--accent-orange);
-      color: #000;
-      font-weight: bold;
-      border-color: var(--accent-orange);
-    }
-
-    .bgm-input-group {
+    .playlist-input-group {
       display: flex;
       gap: 8px;
     }
 
-    .bgm-input-group input {
+    .playlist-input-group input {
       flex: 1;
       background: var(--input-bg);
       border: 1px solid rgba(255, 255, 255, 0.2);
       color: var(--text-main);
-      padding: 0.6rem 1rem;
-      border-radius: 20px;
-      font-size: 0.85rem;
+      padding: 0.75rem 1.2rem;
+      border-radius: 30px;
+      font-size: 0.95rem;
       outline: none;
+      transition: border-color 0.2s;
     }
 
-    .bgm-input-group input:focus {
+    .playlist-input-group input:focus {
       border-color: var(--accent-orange);
     }
 
-    .bgm-input-group button {
-      padding: 0.6rem 1.2rem;
+    .playlist-items {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .playlist-item {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 10px 14px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .playlist-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(247, 151, 29, 0.4);
+    }
+
+    .playlist-item.active {
+      border-color: var(--accent-orange);
+      background: rgba(247, 151, 29, 0.1);
+    }
+
+    .playlist-item-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow: hidden;
+      flex: 1;
+    }
+
+    .playlist-item-icon {
+      color: var(--accent-orange);
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .playlist-item-url {
       font-size: 0.85rem;
+      color: var(--text-sub);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .playlist-item.active .playlist-item-url {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    .playlist-del-btn {
+      background: none;
+      border: none;
+      color: var(--text-sub);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .playlist-del-btn:hover {
+      color: #ff4d4d;
+      background: rgba(255, 77, 77, 0.1);
+    }
+
+    .empty-playlist {
+      text-align: center;
+      color: var(--text-sub);
+      font-size: 0.85rem;
+      padding: 16px 0;
     }
   </style>
 </head>
@@ -616,101 +584,57 @@
         <span style="font-size: 0.8rem; color: var(--text-sub);">[Esc] で閉じる</span>
       </div>
       <div class="cmd-list">
-        <div class="cmd-item"><span class="num">1</span> <span>① 休憩から始める (25分 / 5分休憩)</span></div>
-        <div class="cmd-item"><span class="num">2</span> <span>② 休憩から始める (50分 / 10分休憩)</span></div>
-        <div class="cmd-item"><span class="num">3</span> <span>③ 通常スタート (25分 / 5分)</span></div>
-        <div class="cmd-item"><span class="num">4</span> <span>④ 長め集中 (50分 / 10分)</span></div>
-        <div class="cmd-item"><span class="num">5</span> <span>⑤ 集中 +10分追加</span></div>
-        <div class="cmd-item"><span class="num">6</span> <span>⑥ 集中 +25分追加</span></div>
-        <div class="cmd-item"><span class="num">7</span> <span>⑦ テーマ: ネイビー/ワイン</span></div>
-        <div class="cmd-item"><span class="num">8</span> <span>⑧ テーマ: ピンクダーク</span></div>
-        <div class="cmd-item"><span class="num">9</span> <span>⑨ テーマ: フルブラック</span></div>
-        <div class="cmd-item"><span class="num">0</span> <span>⑩ テーマ: サイバーグリーン</span></div>
+        <div class="cmd-item"><span class="num">1</span> <span>① 休憩からスタート (5分休憩 / 25分)</span></div>
+        <div class="cmd-item"><span class="num">2</span> <span>② 休憩からスタート (10分休憩 / 50分)</span></div>
+        <div class="cmd-item"><span class="num">3</span> <span>③ 通常セット (50分集中 / 10分休憩)</span></div>
+        <div class="cmd-item"><span class="num">4</span> <span>④ ショートセット (25分集中 / 5分休憩)</span></div>
+        <div class="cmd-item"><span class="num">5</span> <span>⑤ タイマー +10分追加</span></div>
+        <div class="cmd-item"><span class="num">6</span> <span>⑥ タイマー +25分追加</span></div>
       </div>
-      <div class="cmd-footer">キーボードの [1]〜[0] を押してコマンドを選択してください</div>
+      <div class="cmd-footer">キーボードの [1]〜[6] を押してコマンドを選択してください</div>
     </div>
   </div>
 
-  <!-- 共通ヘッダー読み込み位置 -->
+  <!-- 共通ヘッダー自動読み込みプレースホルダー -->
   <div id="header-placeholder"></div>
 
+  <!-- タイマーエリア -->
   <section class="timer-section">
     <div class="container">
       <div class="status" id="status">STUDY TIME</div>
-      <div class="timer" id="timer">25:00</div>
+      <div class="timer" id="timer">50:00</div>
       <div class="controls">
-        <button id="startBtn">開始</button>
-        <button id="resetBtn">リセット</button>
+        <div class="btn-row">
+          <button id="startBtn">開始</button>
+          <button id="resetBtn">リセット</button>
+        </div>
+        <button class="fs-btn" id="fsBtn">⛶ フルスクリーンにする</button>
       </div>
-      <button class="fs-btn" id="fsBtn">⛶ フルスクリーンにする</button>
     </div>
   </section>
 
+  <!-- 動画 ＆ プレイリストエリア -->
   <section class="video-section">
-    <div class="section-title">▼ プレイヤー ＆ タイマー設定</div>
+    <div class="video-container">
+      <iframe 
+        id="bgmIframe"
+        src="" 
+        title="YouTube video player" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        referrerpolicy="strict-origin-when-cross-origin" 
+        allowfullscreen>
+      </iframe>
+    </div>
 
-    <div class="split-container">
-      <div class="left-panel">
-        <div class="video-container">
-          <iframe 
-            id="bgmIframe"
-            src="https://www.youtube.com/embed/33L48f1sSrg?enablejsapi=1" 
-            title="YouTube video player" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-            referrerpolicy="strict-origin-when-cross-origin" 
-            allowfullscreen>
-          </iframe>
-        </div>
-        <a id="ytExternalLink" href="https://www.youtube.com/watch?v=33L48f1sSrg" target="_blank" class="link-btn" style="width: 100%;">
-          YouTubeで直接開く ↗
-        </a>
+    <!-- 疑似プレイリスト管理ボックス -->
+    <div class="playlist-section">
+      <div class="playlist-title">🎵 マイプレイリスト (LocalStorage保存)</div>
+      <div class="playlist-input-group">
+        <input type="text" id="playlistUrlInput" placeholder="YouTube URLまたはIDを入力して追加">
+        <button onclick="addPlaylistTrack()">追加</button>
       </div>
-
-      <div class="right-panel">
-        <div class="setting-box">
-          <div class="box-label">⏱️ タイマー時間設定</div>
-          <div class="timer-preset-group">
-            <button class="preset-btn active" id="preset25" onclick="setTimerPreset(25, 5)">25分 / 5分</button>
-            <button class="preset-btn" id="preset50" onclick="setTimerPreset(50, 10)">50分 / 10分</button>
-          </div>
-        </div>
-
-        <div class="setting-box">
-          <div class="box-label">🎨 カラーテーマ（勉強 / 休憩）</div>
-          <div class="color-presets">
-            <button class="color-chip active" onclick="setColorTheme('#191970', '#3d0c11', this)">
-              <span class="color-dot" style="background:#191970;"></span>ネイビー/ワイン
-            </button>
-            <button class="color-chip" onclick="setColorTheme('#4a1525', '#1a0008', this)">
-              <span class="color-dot" style="background:#ff69b4;"></span>ピンクダーク
-            </button>
-            <button class="color-chip" onclick="setColorTheme('#0a0a0a', '#1a1a1a', this)">
-              <span class="color-dot" style="background:#ffffff;"></span>フルブラック
-            </button>
-            <button class="color-chip" onclick="setColorTheme('#0b2b18', '#1c0b2b', this)">
-              <span class="color-dot" style="background:#2ecc71;"></span>サイバーグリーン
-            </button>
-          </div>
-        </div>
-
-        <div class="setting-box">
-          <div class="box-label">🎵 BGM プレイリスト</div>
-          <div class="bgm-presets">
-            <button class="bgm-chip active" onclick="loadBgm('33L48f1sSrg', this)">🔥 Phonk (学校対応)</button>
-            <button class="bgm-chip" onclick="loadBgm('Ljq0c5C7LuM', this)">🔥 Phonk (元動画)</button>
-            <button class="bgm-chip" onclick="loadBgm('h8UpC5JbMU0', this)">🌲 マイクラ</button>
-            <button class="bgm-chip" onclick="loadBgm('Zwo-15CkW24', this)">✨ フリーBGM2</button>
-            <button class="bgm-chip" onclick="loadBgm('mNLJMTRvyj8', this)">☕ ジャズ</button>
-          </div>
-        </div>
-
-        <div class="setting-box">
-          <div class="box-label">🔗 動画URLを入力</div>
-          <div class="bgm-input-group">
-            <input type="text" id="ytUrlInput" placeholder="YouTube URLまたはIDを入力">
-            <button id="changeBgmBtn">変更</button>
-          </div>
-        </div>
+      <div class="playlist-items" id="playlistContainer">
+        <!-- JavaScriptで動的生成 -->
       </div>
     </div>
   </section>
@@ -723,7 +647,7 @@
         document.getElementById('header-placeholder').innerHTML = data;
       });
 
-    // --- 初回アクセス時 年齢確認機能（localStorage対応） ---
+    // --- 初回アクセス時 年齢確認機能 ---
     function checkAgeVerification() {
       const isVerified = localStorage.getItem('age_verified');
       if (isVerified !== 'true') {
@@ -742,7 +666,7 @@
       }
     }
 
-    // --- QRコード モーダル制御関数 ---
+    // --- QRコード モーダル制御 ---
     function openQrModal() {
       const modal = document.getElementById('qrModal');
       if (modal) modal.classList.add('active');
@@ -759,12 +683,132 @@
       }
     }
 
-    let workMinutes = 25;
-    let breakMinutes = 5;
+    // --- プレイリスト管理ロジック (localStorage + 初期プリセット) ---
+    const defaultPlaylist = [
+      { id: 'ZB0amc1TZ3Y', url: 'https://www.youtube.com/watch?v=ZB0amc1TZ3Y' },
+      { id: 'YO-6FsfdXbo', url: 'https://www.youtube.com/watch?v=YO-6FsfdXbo' },
+      { id: 'yLJHxfJpoIM', url: 'https://www.youtube.com/watch?v=yLJHxfJpoIM' },
+      { id: 'BylPLfvm-nM', url: 'https://www.youtube.com/watch?v=BylPLfvm-nM' },
+      { id: 'YY2BjQ7wv-o', url: 'https://www.youtube.com/watch?v=YY2BjQ7wv-o' },
+      { id: 'gIYb014up6g', url: 'https://www.youtube.com/watch?v=gIYb014up6g' }
+    ];
 
+    let playlist = JSON.parse(localStorage.getItem('jiro_playlist'));
+    if (!playlist || playlist.length === 0) {
+      playlist = defaultPlaylist;
+      localStorage.setItem('jiro_playlist', JSON.stringify(playlist));
+    }
+
+    let currentVideoId = playlist.length > 0 ? playlist[0].id : 'ZB0amc1TZ3Y';
+
+    const bgmIframe = document.getElementById('bgmIframe');
+    const playlistContainer = document.getElementById('playlistContainer');
+    const playlistUrlInput = document.getElementById('playlistUrlInput');
+
+    function savePlaylist() {
+      localStorage.setItem('jiro_playlist', JSON.stringify(playlist));
+    }
+
+    function parseVideoId(input) {
+      if (!input) return null;
+      let url = input.trim();
+
+      try {
+        if (url.includes('google.com/') && (url.includes('q=') || url.includes('url='))) {
+          const tempUrl = url.startsWith('http') ? url : 'https://' + url;
+          const parsedObj = new URL(tempUrl);
+          const targetUrl = parsedObj.searchParams.get('q') || parsedObj.searchParams.get('url');
+          if (targetUrl) {
+            url = decodeURIComponent(targetUrl);
+          }
+        }
+      } catch (e) {}
+
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      if (match && match[2].length === 11) {
+        return match[2];
+      }
+
+      if (url.length === 11 && /^[a-zA-Z0-9_-]+$/.test(url)) {
+        return url;
+      }
+
+      return null;
+    }
+
+    function addPlaylistTrack() {
+      const val = playlistUrlInput.value.trim();
+      const vidId = parseVideoId(val);
+
+      if (!vidId) {
+        alert('有効なYouTubeのURLまたはIDを入力してください。');
+        return;
+      }
+
+      playlist.push({ id: vidId, url: val });
+      savePlaylist();
+      renderPlaylist();
+      playlistUrlInput.value = '';
+    }
+
+    function deletePlaylistTrack(index, event) {
+      event.stopPropagation();
+      playlist.splice(index, 1);
+      savePlaylist();
+      renderPlaylist();
+    }
+
+    function playTrack(vidId) {
+      currentVideoId = vidId;
+      bgmIframe.src = `https://www.youtube.com/embed/${vidId}?enablejsapi=1`;
+      renderPlaylist();
+    }
+
+    function renderPlaylist() {
+      if (playlist.length === 0) {
+        playlistContainer.innerHTML = '<div class="empty-playlist">プレイリストに曲がありません。上の入力欄から追加しよう！</div>';
+        return;
+      }
+
+      playlistContainer.innerHTML = '';
+      playlist.forEach((track, index) => {
+        const item = document.createElement('div');
+        item.className = `playlist-item ${track.id === currentVideoId ? 'active' : ''}`;
+        item.onclick = () => playTrack(track.id);
+
+        item.innerHTML = `
+          <div class="playlist-item-info">
+            <span class="playlist-item-icon">▶</span>
+            <span class="playlist-item-url">${escapeHtml(track.url)}</span>
+          </div>
+          <button class="playlist-del-btn" onclick="deletePlaylistTrack(${index}, event)">×</button>
+        `;
+        playlistContainer.appendChild(item);
+      });
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&'`<>"]/g, match => ({
+        '&': '&amp;',
+        '"': '&quot;',
+        "'": '&#39;',
+        '<': '&lt;',
+        '>': '&gt;',
+      }[match] || match));
+    }
+
+    playlistUrlInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        addPlaylistTrack();
+      }
+    });
+
+    // --- タイマー＆その他ロジック ---
+    let workMinutes = 50;
+    let breakMinutes = 10;
     let WORK_TIME = workMinutes * 60;
     let BREAK_TIME = breakMinutes * 60;
-
     let timeLeft = WORK_TIME;
     let timerId = null;
     let isWorkMode = true;
@@ -774,12 +818,8 @@
     const startBtn = document.getElementById('startBtn');
     const resetBtn = document.getElementById('resetBtn');
     const fsBtn = document.getElementById('fsBtn');
-    const bgmIframe = document.getElementById('bgmIframe');
-    const ytUrlInput = document.getElementById('ytUrlInput');
-    const changeBgmBtn = document.getElementById('changeBgmBtn');
-    const ytExternalLink = document.getElementById('ytExternalLink');
 
-    // --- コマンドモード機能 (67入力で起動) ---
+    // 67コマンドモード
     let keyBuffer = '';
     const cmdModal = document.getElementById('cmdModal');
 
@@ -793,12 +833,8 @@
       }
 
       if (cmdModal.classList.contains('active')) {
-        if (e.key >= '1' && e.key <= '9') {
+        if (e.key >= '1' && e.key <= '6') {
           executeCommand(parseInt(e.key));
-          cmdModal.classList.remove('active');
-          e.preventDefault();
-        } else if (e.key === '0') {
-          executeCommand(10);
           cmdModal.classList.remove('active');
           e.preventDefault();
         }
@@ -807,9 +843,7 @@
 
       if (e.key >= '0' && e.key <= '9') {
         keyBuffer += e.key;
-        if (keyBuffer.length > 2) {
-          keyBuffer = keyBuffer.slice(-2);
-        }
+        if (keyBuffer.length > 2) keyBuffer = keyBuffer.slice(-2);
         if (keyBuffer === '67') {
           cmdModal.classList.add('active');
           keyBuffer = '';
@@ -821,40 +855,12 @@
 
     function executeCommand(num) {
       switch(num) {
-        case 1:
-          setTimerPreset(25, 5);
-          startBreakModeDirectly(5 * 60);
-          break;
-        case 2:
-          setTimerPreset(50, 10);
-          startBreakModeDirectly(10 * 60);
-          break;
-        case 3:
-          setTimerPreset(25, 5);
-          break;
-        case 4:
-          setTimerPreset(50, 10);
-          break;
-        case 5:
-          timeLeft += 10 * 60;
-          updateDisplay();
-          break;
-        case 6:
-          timeLeft += 25 * 60;
-          updateDisplay();
-          break;
-        case 7:
-          setColorTheme('#191970', '#3d0c11', document.querySelectorAll('.color-chip')[0]);
-          break;
-        case 8:
-          setColorTheme('#4a1525', '#1a0008', document.querySelectorAll('.color-chip')[1]);
-          break;
-        case 9:
-          setColorTheme('#0a0a0a', '#1a1a1a', document.querySelectorAll('.color-chip')[2]);
-          break;
-        case 10:
-          setColorTheme('#0b2b18', '#1c0b2b', document.querySelectorAll('.color-chip')[3]);
-          break;
+        case 1: setTimerPreset(25, 5); startBreakModeDirectly(5 * 60); break;
+        case 2: setTimerPreset(50, 10); startBreakModeDirectly(10 * 60); break;
+        case 3: setTimerPreset(50, 10); break;
+        case 4: setTimerPreset(25, 5); break;
+        case 5: timeLeft += 10 * 60; updateDisplay(); break;
+        case 6: timeLeft += 25 * 60; updateDisplay(); break;
       }
     }
 
@@ -887,19 +893,7 @@
       breakMinutes = brk;
       WORK_TIME = workMinutes * 60;
       BREAK_TIME = breakMinutes * 60;
-
-      document.getElementById('preset25').classList.toggle('active', work === 25);
-      document.getElementById('preset50').classList.toggle('active', work === 50);
-
       resetTimer();
-    }
-
-    function setColorTheme(workBg, breakBg, btnElement) {
-      document.documentElement.style.setProperty('--bg-work', workBg);
-      document.documentElement.style.setProperty('--bg-break', breakBg);
-
-      document.querySelectorAll('.color-chip').forEach(btn => btn.classList.remove('active'));
-      if (btnElement) btnElement.classList.add('active');
     }
 
     function startTimer() {
@@ -953,9 +947,7 @@
           alert(`フルスクリーンに失敗しました: ${err.message}`);
         });
       } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        }
+        if (document.exitFullscreen) document.exitFullscreen();
       }
     });
 
@@ -968,78 +960,20 @@
       }
     });
 
-    function parseVideoUrl(input) {
-      if (!input) return null;
-      let url = input.trim();
-
-      try {
-        if (url.includes('google.com/')) {
-          const tempUrl = url.startsWith('http') ? url : 'https://' + url;
-          const parsedObj = new URL(tempUrl);
-          const targetUrl = parsedObj.searchParams.get('url') || parsedObj.searchParams.get('q');
-          if (targetUrl) {
-            url = decodeURIComponent(targetUrl);
-          }
-        }
-      } catch (e) {}
-
-      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-      const match = url.match(regExp);
-      if (match && match[2].length === 11) {
-        return { type: 'youtube', id: match[2] };
-      }
-
-      if (url.length === 11 && /^[a-zA-Z0-9_-]+$/.test(url)) {
-        return { type: 'youtube', id: url };
-      }
-
-      return { type: 'other', url: url };
-    }
-
-    function loadBgm(videoId, element) {
-      bgmIframe.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1`;
-      ytExternalLink.href = `https://www.youtube.com/watch?v=${videoId}`;
-      
-      document.querySelectorAll('.bgm-chip').forEach(btn => btn.classList.remove('active'));
-      if (element) element.classList.add('active');
-    }
-
-    function changeBgm() {
-      const inputVal = ytUrlInput.value.trim();
-      if (!inputVal) return;
-
-      const result = parseVideoUrl(inputVal);
-
-      if (result.type === 'youtube') {
-        bgmIframe.src = `https://www.youtube.com/embed/${result.id}?enablejsapi=1`;
-        ytExternalLink.href = `https://www.youtube.com/watch?v=${result.id}`;
-        ytUrlInput.value = '';
-        document.querySelectorAll('.bgm-chip').forEach(btn => btn.classList.remove('active'));
-      } else if (result.type === 'other') {
-        bgmIframe.src = result.url;
-        ytExternalLink.href = result.url;
-        ytUrlInput.value = '';
-      } else {
-        alert('正しいURLを入力してください。');
-      }
-    }
-
     startBtn.addEventListener('click', () => {
-      if (timerId === null) {
-        startTimer();
-      } else {
-        pauseTimer();
-      }
+      if (timerId === null) startTimer();
+      else pauseTimer();
     });
 
     resetBtn.addEventListener('click', resetTimer);
-    changeBgmBtn.addEventListener('click', changeBgm);
-    ytUrlInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') changeBgm();
-    });
 
+    // 初期化実行
     checkAgeVerification();
     updateDisplay();
+    renderPlaylist();
+    if (playlist.length > 0) {
+      bgmIframe.src = `https://www.youtube.com/embed/${playlist[0].id}?enablejsapi=1`;
+    }
   </script>
 </body>
 </html>
