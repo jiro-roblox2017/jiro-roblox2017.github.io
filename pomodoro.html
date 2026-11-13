@@ -50,6 +50,48 @@
       background-color: var(--bg-break);
     }
 
+    /* --- 初回アクセス時・下部スクロール誘導サイン --- */
+    .scroll-hint-banner {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(20, 20, 20, 0.95);
+      border: 1px solid var(--accent-orange);
+      color: var(--text-main);
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+      z-index: 1500;
+      align-items: center;
+      gap: 12px;
+      backdrop-filter: blur(8px);
+      animation: bounceHint 2s infinite ease-in-out;
+    }
+
+    .scroll-hint-banner.active {
+      display: flex;
+    }
+
+    .scroll-hint-banner button {
+      background: var(--accent-orange);
+      color: #000;
+      border: none;
+      padding: 4px 12px;
+      font-size: 0.8rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    @keyframes bounceHint {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-6px); }
+    }
+
     /* --- 年齢確認モーダル --- */
     .age-modal {
       display: none;
@@ -658,6 +700,12 @@
 </head>
 <body>
 
+  <!-- 初回アクセスのスクロール誘導バナー -->
+  <div class="scroll-hint-banner" id="scrollHintBanner">
+    <span>👇 下に設定やプレイリストがあります！</span>
+    <button onclick="dismissScrollHint()">OK</button>
+  </div>
+
   <!-- 初回アクセス用 年齢確認モーダル -->
   <div class="age-modal" id="ageModal">
     <div class="age-modal-content">
@@ -751,16 +799,16 @@
         <div class="setting-box">
           <div class="box-label">🎨 カラーテーマ</div>
           <div class="color-presets">
-            <button class="color-chip active" onclick="setColorTheme('#0F2350', '#3a1015', this)">
+            <button class="color-chip active" data-work="#0F2350" data-break="#3a1015" onclick="setColorTheme('#0F2350', '#3a1015', this)">
               <span class="color-dot" style="background:#0F2350;"></span>ネイビー / ワイン
             </button>
-            <button class="color-chip" onclick="setColorTheme('#4a1525', '#1a0008', this)">
+            <button class="color-chip" data-work="#4a1525" data-break="#1a0008" onclick="setColorTheme('#4a1525', '#1a0008', this)">
               <span class="color-dot" style="background:#ff6b00;"></span>ピンクダーク
             </button>
-            <button class="color-chip" onclick="setColorTheme('#0a0a0a', '#1a1a1a', this)">
+            <button class="color-chip" data-work="#0a0a0a" data-break="#1a1a1a" onclick="setColorTheme('#0a0a0a', '#1a1a1a', this)">
               <span class="color-dot" style="background:#ffffff;"></span>フルブラック
             </button>
-            <button class="color-chip" onclick="setColorTheme('#0b2b18', '#1c0b2b', this)">
+            <button class="color-chip" data-work="#0b2b18" data-break="#1c0b2b" onclick="setColorTheme('#0b2b18', '#1c0b2b', this)">
               <span class="color-dot" style="background:#2ecc71;"></span>サイバーグリーン
             </button>
           </div>
@@ -797,6 +845,26 @@
       }
     }
 
+    // --- 初回アクセス時のスクロール誘導サイン制御 ---
+    function checkScrollHint() {
+      const dismissed = localStorage.getItem('scroll_hint_dismissed');
+      if (!dismissed) {
+        document.getElementById('scrollHintBanner').classList.add('active');
+      }
+    }
+
+    function dismissScrollHint() {
+      localStorage.setItem('scroll_hint_dismissed', 'true');
+      document.getElementById('scrollHintBanner').classList.remove('active');
+    }
+
+    // ページを少しスクロールしたら自動で消えるようにする
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        dismissScrollHint();
+      }
+    });
+
     // --- QRコード モーダル制御 ---
     function openQrModal() {
       const modal = document.getElementById('qrModal');
@@ -814,11 +882,34 @@
       }
     }
 
-    // --- カラーテーマ切り替え関数 ---
+    // --- 保存された設定の復元ロジック (localStorage) ---
+    let savedWorkMin = parseInt(localStorage.getItem('jiro_work_min')) || 50;
+    let savedBreakMin = parseInt(localStorage.getItem('jiro_break_min')) || 10;
+    let savedWorkBg = localStorage.getItem('jiro_work_bg') || '#0F2350';
+    let savedBreakBg = localStorage.getItem('jiro_break_bg') || '#3a1015';
+
+    // 初期テーマ適用
+    document.documentElement.style.setProperty('--bg-work', savedWorkBg);
+    document.documentElement.style.setProperty('--bg-break', savedBreakBg);
+    document.body.style.backgroundColor = savedWorkBg;
+
+    // カラーチップのアクティブ状態復元
+    document.querySelectorAll('.color-chip').forEach(chip => {
+      if (chip.getAttribute('data-work') === savedWorkBg) {
+        chip.classList.add('active');
+      } else {
+        chip.classList.remove('active');
+      }
+    });
+
+    // カラーテーマ切り替え関数
     function setColorTheme(workBg, breakBg, btnElement) {
       document.documentElement.style.setProperty('--bg-work', workBg);
       document.documentElement.style.setProperty('--bg-break', breakBg);
-      document.body.style.backgroundColor = workBg;
+      document.body.style.backgroundColor = isWorkMode ? workBg : breakBg;
+
+      localStorage.setItem('jiro_work_bg', workBg);
+      localStorage.setItem('jiro_break_bg', breakBg);
 
       document.querySelectorAll('.color-chip').forEach(btn => btn.classList.remove('active'));
       if (btnElement) btnElement.classList.add('active');
@@ -946,8 +1037,8 @@
     });
 
     // --- タイマー＆その他ロジック ---
-    let workMinutes = 50;
-    let breakMinutes = 10;
+    let workMinutes = savedWorkMin;
+    let breakMinutes = savedBreakMin;
     let WORK_TIME = workMinutes * 60;
     let BREAK_TIME = breakMinutes * 60;
     let timeLeft = WORK_TIME;
@@ -959,6 +1050,10 @@
     const startBtn = document.getElementById('startBtn');
     const resetBtn = document.getElementById('resetBtn');
     const fsBtn = document.getElementById('fsBtn');
+
+    // プリセットボタンの初期アクティブ状態同期
+    document.getElementById('preset25').classList.toggle('active', workMinutes === 25);
+    document.getElementById('preset50').classList.toggle('active', workMinutes === 50);
 
     // 67コマンドモード
     let keyBuffer = '';
@@ -1034,6 +1129,10 @@
       breakMinutes = brk;
       WORK_TIME = workMinutes * 60;
       BREAK_TIME = breakMinutes * 60;
+
+      // localStorageに時間を保存
+      localStorage.setItem('jiro_work_min', work);
+      localStorage.setItem('jiro_break_min', brk);
 
       document.getElementById('preset25').classList.toggle('active', work === 25);
       document.getElementById('preset50').classList.toggle('active', work === 50);
@@ -1114,6 +1213,7 @@
 
     // 初期化実行
     checkAgeVerification();
+    checkScrollHint();
     updateDisplay();
     renderPlaylist();
     if (playlist.length > 0) {
