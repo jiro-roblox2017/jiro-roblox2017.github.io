@@ -30,6 +30,12 @@
       height: 100vh !important;
     }
 
+    /* フルスクリーン時にヘッダーを完全に隠す */
+    :fullscreen .header-group,
+    :-webkit-full-screen .header-group {
+      display: none !important;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
