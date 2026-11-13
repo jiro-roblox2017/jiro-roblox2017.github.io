@@ -30,10 +30,16 @@
       height: 100vh !important;
     }
 
-    /* フルスクリーン時にヘッダーを完全に隠す */
+    /* フルスクリーン時にヘッダーを完全に隠し、タイマーエリアの高さを自動調整してはみ出しを防ぐ */
     :fullscreen .header-group,
     :-webkit-full-screen .header-group {
       display: none !important;
+    }
+
+    :fullscreen .timer-section,
+    :-webkit-full-screen .timer-section {
+      min-height: auto !important;
+      padding: 15px 20px !important;
     }
 
     * {
