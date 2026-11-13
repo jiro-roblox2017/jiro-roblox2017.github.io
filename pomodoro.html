@@ -30,10 +30,27 @@
       height: 100vh !important;
     }
 
-    /* フルスクリーン時にヘッダーを完全に隠す */
+    /* フルスクリーン時にヘッダーを完全に隠し、レイアウトがはみ出さないように調整 */
     :fullscreen .header-group,
     :-webkit-full-screen .header-group {
       display: none !important;
+    }
+
+    :fullscreen .timer-section,
+    :-webkit-full-screen .timer-section {
+      min-height: auto !important;
+      padding: 15px 20px !important;
+    }
+
+    :fullscreen .timer,
+    :-webkit-full-screen .timer {
+      font-size: 5rem !important;
+      margin-bottom: 1.5rem !important;
+    }
+
+    :fullscreen .video-section,
+    :-webkit-full-screen .video-section {
+      padding: 20px !important;
     }
 
     * {
