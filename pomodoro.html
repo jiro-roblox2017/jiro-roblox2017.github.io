@@ -169,6 +169,97 @@
       opacity: 0.9;
     }
 
+    /* --- カスタム時間設定モーダル --- */
+    .custom-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 2200;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .custom-modal.active {
+      display: flex;
+    }
+
+    .custom-modal-content {
+      background-color: var(--card-bg);
+      border: 1px solid var(--accent-orange);
+      padding: 32px 24px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 380px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .custom-modal-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--accent-orange);
+      text-align: center;
+    }
+
+    .custom-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .custom-input-group label {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+    }
+
+    .custom-input-group input {
+      background: var(--input-bg);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--text-main);
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .custom-input-group input:focus {
+      border-color: var(--accent-orange);
+    }
+
+    .custom-btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .custom-btn {
+      flex: 1;
+      padding: 10px;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      font-size: 0.9rem;
+    }
+
+    .custom-btn.save {
+      background-color: var(--accent-orange);
+      color: #000;
+    }
+
+    .custom-btn.cancel {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: var(--text-sub);
+    }
+
     /* --- コマンドモード モーダル (67) --- */
     .cmd-modal {
       display: none;
@@ -718,6 +809,25 @@
     </div>
   </div>
 
+  <!-- カスタム時間設定モーダル -->
+  <div class="custom-modal" id="customModal">
+    <div class="custom-modal-content">
+      <div class="custom-modal-title">⚙️ カスタム時間設定</div>
+      <div class="custom-input-group">
+        <label>集中時間 (分)</label>
+        <input type="number" id="customWorkInput" min="1" max="180" value="25">
+      </div>
+      <div class="custom-input-group">
+        <label>休憩時間 (分)</label>
+        <input type="number" id="customBreakInput" min="1" max="60" value="5">
+      </div>
+      <div class="custom-btn-group">
+        <button class="custom-btn cancel" onclick="closeCustomModal()">キャンセル</button>
+        <button class="custom-btn save" onclick="saveCustomPreset()">適用する</button>
+      </div>
+    </div>
+  </div>
+
   <!-- コマンドモード モーダル (67) -->
   <div class="cmd-modal" id="cmdModal">
     <div class="cmd-content">
@@ -791,7 +901,8 @@
           <div class="box-label">⏱️ タイマー時間設定</div>
           <div class="timer-preset-group">
             <button class="preset-btn" id="preset25" onclick="setTimerPreset(25, 5)">25分集中 / 5分休憩</button>
-            <button class="preset-btn active" id="preset50" onclick="setTimerPreset(50, 10)">50分集中 / 10分休憩</button>
+            <button class="preset-btn" id="preset50" onclick="setTimerPreset(50, 10)">50分集中 / 10分休憩</button>
+            <button class="preset-btn" id="presetCustom" onclick="openCustomModal()">⚙️ カスタム設定 (自由に変更)</button>
           </div>
         </div>
 
@@ -799,7 +910,7 @@
         <div class="setting-box">
           <div class="box-label">🎨 カラーテーマ</div>
           <div class="color-presets">
-            <button class="color-chip active" data-work="#0F2350" data-break="#3a1015" onclick="setColorTheme('#0F2350', '#3a1015', this)">
+            <button class="color-chip" data-work="#0F2350" data-break="#3a1015" onclick="setColorTheme('#0F2350', '#3a1015', this)">
               <span class="color-dot" style="background:#0F2350;"></span>ネイビー / ワイン
             </button>
             <button class="color-chip" data-work="#4a1525" data-break="#1a0008" onclick="setColorTheme('#4a1525', '#1a0008', this)">
@@ -845,6 +956,30 @@
       }
     }
 
+    // --- カスタム設定モーダル制御 ---
+    function openCustomModal() {
+      document.getElementById('customWorkInput').value = workMinutes;
+      document.getElementById('customBreakInput').value = breakMinutes;
+      document.getElementById('customModal').classList.add('active');
+    }
+
+    function closeCustomModal() {
+      document.getElementById('customModal').classList.remove('active');
+    }
+
+    function saveCustomPreset() {
+      const w = parseInt(document.getElementById('customWorkInput').value);
+      const b = parseInt(document.getElementById('customBreakInput').value);
+
+      if (isNaN(w) || w <= 0 || isNaN(b) || b <= 0) {
+        alert('有効な分数を入力してください。');
+        return;
+      }
+
+      setTimerPreset(w, b, true);
+      closeCustomModal();
+    }
+
     // --- 初回アクセス時のスクロール誘導サイン制御 ---
     function checkScrollHint() {
       const dismissed = localStorage.getItem('scroll_hint_dismissed');
@@ -858,7 +993,6 @@
       document.getElementById('scrollHintBanner').classList.remove('active');
     }
 
-    // ページを少しスクロールしたら自動で消えるようにする
     window.addEventListener('scroll', () => {
       if (window.scrollY > 100) {
         dismissScrollHint();
@@ -885,6 +1019,8 @@
     // --- 保存された設定の復元ロジック (localStorage) ---
     let savedWorkMin = parseInt(localStorage.getItem('jiro_work_min')) || 50;
     let savedBreakMin = parseInt(localStorage.getItem('jiro_break_min')) || 10;
+    let isCustomPreset = localStorage.getItem('jiro_is_custom') === 'true';
+
     let savedWorkBg = localStorage.getItem('jiro_work_bg') || '#0F2350';
     let savedBreakBg = localStorage.getItem('jiro_break_bg') || '#3a1015';
 
@@ -1051,9 +1187,19 @@
     const resetBtn = document.getElementById('resetBtn');
     const fsBtn = document.getElementById('fsBtn');
 
-    // プリセットボタンの初期アクティブ状態同期
-    document.getElementById('preset25').classList.toggle('active', workMinutes === 25);
-    document.getElementById('preset50').classList.toggle('active', workMinutes === 50);
+    // プリセットボタンのアクティブ状態初期化
+    function updatePresetButtonsUI() {
+      const isCustom = isCustomPreset || (workMinutes !== 25 && workMinutes !== 50);
+      document.getElementById('preset25').classList.toggle('active', !isCustom && workMinutes === 25);
+      document.getElementById('preset50').classList.toggle('active', !isCustom && workMinutes === 50);
+      const customBtn = document.getElementById('presetCustom');
+      customBtn.classList.toggle('active', isCustom);
+      if (isCustom) {
+        customBtn.textContent = `⚙️ カスタム (${workMinutes}分 / ${breakMinutes}分)`;
+      } else {
+        customBtn.textContent = `⚙️ カスタム設定 (自由に変更)`;
+      }
+    }
 
     // 67コマンドモード
     let keyBuffer = '';
@@ -1064,6 +1210,7 @@
 
       if (e.key === 'Escape') {
         cmdModal.classList.remove('active');
+        document.getElementById('customModal').classList.remove('active');
         keyBuffer = '';
         return;
       }
@@ -1091,10 +1238,10 @@
 
     function executeCommand(num) {
       switch(num) {
-        case 1: setTimerPreset(25, 5); startBreakModeDirectly(5 * 60); break;
-        case 2: setTimerPreset(50, 10); startBreakModeDirectly(10 * 60); break;
-        case 3: setTimerPreset(50, 10); break;
-        case 4: setTimerPreset(25, 5); break;
+        case 1: setTimerPreset(25, 5, false); startBreakModeDirectly(5 * 60); break;
+        case 2: setTimerPreset(50, 10, false); startBreakModeDirectly(10 * 60); break;
+        case 3: setTimerPreset(50, 10, false); break;
+        case 4: setTimerPreset(25, 5, false); break;
         case 5: timeLeft += 10 * 60; updateDisplay(); break;
         case 6: timeLeft += 25 * 60; updateDisplay(); break;
       }
@@ -1123,20 +1270,20 @@
       document.title = `${minutes}:${seconds} - ${isWorkMode ? '勉強中' : '休憩中'}`;
     }
 
-    function setTimerPreset(work, brk) {
+    function setTimerPreset(work, brk, isCustom = false) {
       pauseTimer();
       workMinutes = work;
       breakMinutes = brk;
       WORK_TIME = workMinutes * 60;
       BREAK_TIME = breakMinutes * 60;
+      isCustomPreset = isCustom;
 
-      // localStorageに時間を保存
+      // localStorageに保存
       localStorage.setItem('jiro_work_min', work);
       localStorage.setItem('jiro_break_min', brk);
+      localStorage.setItem('jiro_is_custom', isCustom);
 
-      document.getElementById('preset25').classList.toggle('active', work === 25);
-      document.getElementById('preset50').classList.toggle('active', work === 50);
-
+      updatePresetButtonsUI();
       resetTimer();
     }
 
@@ -1214,6 +1361,7 @@
     // 初期化実行
     checkAgeVerification();
     checkScrollHint();
+    updatePresetButtonsUI();
     updateDisplay();
     renderPlaylist();
     if (playlist.length > 0) {
